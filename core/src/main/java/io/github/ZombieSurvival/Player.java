@@ -200,4 +200,83 @@ public class Player {
     public void modifyCurrentScore(final int amount) {
         currentScore += amount;
     }
+
+    /**
+     * Compares this Player to another Object for equality.
+     *
+     * @param object an Object
+     * @return true if equal, false otherwise
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+
+        Player player = (Player) object;
+
+        return getMaxHP() == player.getMaxHP()
+            && getMaxStamina() == player.getMaxStamina()
+            && this.maxCharge == player.maxCharge
+            && getCurrentHP() == player.getCurrentHP()
+            && getCurrentStamina() == player.getCurrentStamina()
+            && getCurrentCharge() == player.getCurrentCharge()
+            && getIsCharged() == player.getIsCharged()
+            && getXCoordinate() == player.getXCoordinate()
+            && getYCoordinate() == player.getYCoordinate()
+            && getCurrentScore() == player.getCurrentScore();
+    }
+
+    /**
+     * Returns a hash code for this Player.
+     *
+     * @return a hash code
+     */
+    @Override
+    public int hashCode() {
+        final int usefulPrime = 23;
+        int result;
+
+        result = getMaxHP();
+        result = usefulPrime * result + getMaxStamina();
+        result = usefulPrime * result + maxCharge;
+        result = usefulPrime * result + getCurrentHP();
+        result = usefulPrime * result + getCurrentStamina();
+        result = usefulPrime * result + getCurrentCharge();
+        if (getIsCharged()) {
+            result = usefulPrime * result + 1;
+        } else {
+            result = usefulPrime * result;
+        }
+        result = usefulPrime * result + getXCoordinate();
+        result = usefulPrime * result + getYCoordinate();
+        result = usefulPrime * result + getCurrentScore();
+        return result;
+    }
+
+    /**
+     * Returns a String representation of this Loan.
+     *
+     * @return a String
+     */
+    @Override
+    public String toString() {
+        final StringBuilder builder;
+        builder = new StringBuilder("Player{\n");
+        builder.append("maxHP='").append(getMaxHP()).append("', \n");
+        builder.append("maxStamina='").append(getMaxStamina()).append("', \n");
+        builder.append("maxCharge='").append(maxCharge).append("', \n");
+        builder.append("currentHP='").append(getCurrentStamina()).append("', \n");
+        builder.append("currentStamina='").append(getMaxStamina()).append("', \n");
+        builder.append("currentCharge='").append(getCurrentCharge()).append("', \n");
+        builder.append("isCharged='").append(getIsCharged()).append("', \n");
+        builder.append("xCoordinate='").append(getXCoordinate()).append("', \n");
+        builder.append("yCoordinate='").append(getYCoordinate()).append("', \n");
+        builder.append("currentScore='").append(getCurrentScore());
+        builder.append("\n}");
+        return builder.toString();
+    }
 }
