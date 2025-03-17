@@ -55,30 +55,69 @@ public class Player {
         currentScore = 0;
     }
 
-
+    // HP related methods
+    /**
+     * Returns the maxHP of this Player.
+     *
+     * @return maxHP as int
+     */
     public int getMaxHP() {
         return maxHP;
     }
+    /**
+     * Returns the currentHP of this Player.
+     *
+     * @return currentHP as int
+     */
     public int getCurrentHP() {
         return currentHP;
     }
+    /**
+     * Modify the Player's currentHP by the specified amount.
+     *
+     * @param amount an int
+     */
     public void modifyCurrentHP(final int amount) {
         currentHP += amount;
     }
-
+    // Stamina related methods
+    /**
+     * Returns the maxStamina of this Player.
+     *
+     * @return maxStamina as int
+     */
     public int getMaxStamina() {
         return maxStamina;
     }
+    /**
+     * Returns the currentStamina of this Player.
+     *
+     * @return currentStamina as int
+     */
     public int getCurrentStamina() {
         return currentStamina;
     }
+    /**
+     * Modify the Player's currentStamina by the specified amount.
+     *
+     * @param amount an int
+     */
     public void modifyCurrentStamina(final int amount) {
         currentStamina += amount;
     }
-
+    // Ability related methods
+    /**
+     * Returns the currentCharge of this Player's ability.
+     *
+     * @return currentCharge as int
+     */
     public int getCurrentCharge() {
         return currentCharge;
     }
+    /**
+     * Increases the currentCharge by 1 if the currentCharge is smaller than the maxCharge value.
+     * If the currentCharge equals the maxCharge, changes isCharged value to true.
+     */
     public void increaseCurrentCharge() {
         if (currentCharge < maxCharge) {
             currentCharge++;
@@ -86,31 +125,79 @@ public class Player {
             isCharged = true;
         }
     }
+    /**
+     * Returns the isCharged of this Player's ability.
+     *
+     * @return isCharged as boolean
+     */
     public boolean getIsCharged() {
         return isCharged;
     }
+    /**
+     * If the ability is charged, resets the currentCharge to 0 and resets the isCharged to false.
+     */
     public void useAbility() {
         if (isCharged) {
             currentCharge = 0;
             isCharged = false;
         }
     }
-
+    // Location related methods
+    /**
+     * Returns the xCoordinate of this Player.
+     *
+     * @return xCoordinate as int
+     */
     public int getXCoordinate() {
         return xCoordinate;
     }
+    /**
+     * Returns the yCoordinate of this Player.
+     *
+     * @return yCoordinate as int
+     */
     public int getYCoordinate() {
         return yCoordinate;
     }
-//    public void movePlayer(Directions direction) {
-//         switch (direction)
-//             case
-//    }
-
+    /**
+     * Moves the player in the specified direction.
+     *
+     * @param direction a Direction
+     * @throws IllegalArgumentException if direction is not an expected direction
+     */
+    public void movePlayer(final Direction direction) {
+         switch (direction) {
+             case N:
+                 yCoordinate += 1;
+                 break;
+             case E:
+                 xCoordinate -= 1;
+                 break;
+             case W:
+                 xCoordinate += 1;
+                 break;
+             case S:
+                 yCoordinate -= 1;
+                 break;
+             default:
+                 throw new IllegalArgumentException("Invalid directional input.");
+         }
+    }
+    // Score related methods
+    /**
+     * Returns the currentScore of this Player.
+     *
+     * @return currentScore as int
+     */
     public int getCurrentScore() {
         return currentScore;
     }
-    public void modifyCurrentScore(int amount) {
+    /**
+     * Modify the Player's currentScore by the specified amount.
+     *
+     * @param amount an int
+     */
+    public void modifyCurrentScore(final int amount) {
         currentScore += amount;
     }
 }
