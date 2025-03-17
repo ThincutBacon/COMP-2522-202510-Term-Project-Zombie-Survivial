@@ -56,4 +56,61 @@ public class Player {
     }
 
 
+    public int getMaxHP() {
+        return maxHP;
+    }
+    public int getCurrentHP() {
+        return currentHP;
+    }
+    public void modifyCurrentHP(final int amount) {
+        currentHP += amount;
+    }
+
+    public int getMaxStamina() {
+        return maxStamina;
+    }
+    public int getCurrentStamina() {
+        return currentStamina;
+    }
+    public void modifyCurrentStamina(final int amount) {
+        currentStamina += amount;
+    }
+
+    public int getCurrentCharge() {
+        return currentCharge;
+    }
+    public void increaseCurrentCharge() {
+        if (currentCharge < maxCharge) {
+            currentCharge++;
+        } else {
+            isCharged = true;
+        }
+    }
+    public boolean getIsCharged() {
+        return isCharged;
+    }
+    public void useAbility() {
+        if (isCharged) {
+            currentCharge = 0;
+            isCharged = false;
+        }
+    }
+
+    public int getXCoordinate() {
+        return xCoordinate;
+    }
+    public int getYCoordinate() {
+        return yCoordinate;
+    }
+//    public void movePlayer(Directions direction) {
+//         switch (direction)
+//             case
+//    }
+
+    public int getCurrentScore() {
+        return currentScore;
+    }
+    public void modifyCurrentScore(int amount) {
+        currentScore += amount;
+    }
 }
