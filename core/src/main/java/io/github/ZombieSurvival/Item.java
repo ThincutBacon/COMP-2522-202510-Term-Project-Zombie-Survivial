@@ -90,7 +90,7 @@ public class Item extends Entity {
     @Override
     public String toString() {
         final StringBuilder builder;
-        builder = new StringBuilder("Entity{\n");
+        builder = new StringBuilder("Item{\n");
         builder.append("value='").append(this.value).append("', \n");
         builder.append("xCoordinate=").append(getXCoordinate()).append(", \n");
         builder.append("yCoordinate='").append(getYCoordinate()).append(", \n");
