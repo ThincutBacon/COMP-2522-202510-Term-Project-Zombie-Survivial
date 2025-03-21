@@ -40,14 +40,6 @@ public abstract class Entity {
      */
     abstract void modifyPlayerStat(Player player);
     /**
-     * Returns the value of this Entity.
-     *
-     * @return value as int
-     */
-    protected int getValue() {
-        return value;
-    }
-    /**
      * Returns the xCoordinate of this Entity.
      *
      * @return xCoordinate as int
@@ -81,7 +73,7 @@ public abstract class Entity {
 
         Entity entity = (Entity) object;
 
-        return getValue() == entity.getValue()
+        return this.value == entity.value
             && getXCoordinate() == entity.getXCoordinate()
             && getYCoordinate() == entity.getYCoordinate();
     }
@@ -96,7 +88,7 @@ public abstract class Entity {
         final int usefulPrime = 23;
         int result;
 
-        result = getValue();
+        result = this.value;
         result = usefulPrime * result + getXCoordinate();
         result = usefulPrime * result + getYCoordinate();
         return result;
@@ -111,7 +103,7 @@ public abstract class Entity {
     public String toString() {
         final StringBuilder builder;
         builder = new StringBuilder("Entity{\n");
-        builder.append("value='").append(getValue()).append("', \n");
+        builder.append("value='").append(this.value).append("', \n");
         builder.append("xCoordinate=").append(getXCoordinate()).append(", \n");
         builder.append("yCoordinate='").append(getYCoordinate());
         builder.append("\n}");
