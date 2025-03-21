@@ -14,7 +14,7 @@
  */
 //Note, the above license and copyright applies to this file only.
 
-package io.github.DeliveryService.lwjgl3;
+package io.github.ZombieSurvival.lwjgl3;
 
 import org.lwjgl.system.macosx.LibC;
 

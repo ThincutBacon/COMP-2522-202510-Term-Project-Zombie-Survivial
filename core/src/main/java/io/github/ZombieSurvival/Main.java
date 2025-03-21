@@ -1,4 +1,4 @@
-package io.github.DeliveryService;
+package io.github.ZombieSurvival;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
