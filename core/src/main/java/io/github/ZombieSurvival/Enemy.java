@@ -49,16 +49,16 @@ public class Enemy extends Entity {
     public void moveEnemy(final Direction direction) {
         switch (direction) {
             case N:
-                yCoordinate += speed;
+                currentYCoordinate += speed;
                 break;
             case E:
-                xCoordinate -= speed;
+                currentXCoordinate -= speed;
                 break;
             case W:
-                xCoordinate += speed;
+                currentXCoordinate += speed;
                 break;
             case S:
-                yCoordinate -= speed;
+                currentYCoordinate -= speed;
                 break;
             default:
                 throw new IllegalArgumentException("Invalid directional input.");
@@ -73,5 +73,65 @@ public class Enemy extends Entity {
     @Override
     void modifyPlayerStat(final Player player) {
         player.modifyCurrentHP(value);
+    }
+
+    /**
+     * Compares this Enemy to another Object for equality.
+     *
+     * @param object an Object
+     * @return true if equal, false otherwise
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+
+        Enemy enemy = (Enemy) object;
+
+        return
+            super.equals(enemy)
+            && this.speed == enemy.speed
+            && getCurrentXCoordinate() == enemy.getCurrentXCoordinate()
+            && getCurrentYCoordinate() == enemy.getCurrentYCoordinate();
+    }
+
+    /**
+     * Returns a hash code for this Enemy.
+     *
+     * @return a hash code
+     */
+    @Override
+    public int hashCode() {
+        final int usefulPrime = 23;
+        int result;
+
+        result = super.hashCode();
+        result = usefulPrime * result + this.speed;
+        result = usefulPrime * result + getCurrentXCoordinate();
+        result = usefulPrime * result + getCurrentYCoordinate();
+        return result;
+    }
+
+    /**
+     * Returns a String representation of this Enemy.
+     *
+     * @return a String
+     */
+    @Override
+    public String toString() {
+        final StringBuilder builder;
+        builder = new StringBuilder("Enemy{\n");
+        builder.append("value='").append(this.value).append("', \n");
+        builder.append("xCoordinate=").append(getXCoordinate()).append(", \n");
+        builder.append("yCoordinate='").append(getYCoordinate()).append(", \n");
+        builder.append("speed='").append(this.speed).append(", \n");
+        builder.append("currentXCoordinate=").append(getCurrentXCoordinate()).append(", \n");
+        builder.append("currentYCoordinate='").append(getCurrentYCoordinate());
+        builder.append("\n}");
+        return builder.toString();
     }
 }
