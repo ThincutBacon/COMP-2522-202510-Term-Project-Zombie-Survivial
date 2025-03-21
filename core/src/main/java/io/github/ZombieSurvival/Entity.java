@@ -95,7 +95,7 @@ public abstract class Entity {
     }
 
     /**
-     * Returns a String representation of this Loan.
+     * Returns a String representation of this Entity.
      *
      * @return a String
      */
