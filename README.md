@@ -1,4 +1,6 @@
-# COMP-2522-202510-Term-Project-Delivery-Service
+# COMP-2522-202510-Term-Project-Zombie-Survival
+> **Game Title:** Rot 'N' Run   
+> **Developer:** Kanon Nishiyama
 
 A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
 
