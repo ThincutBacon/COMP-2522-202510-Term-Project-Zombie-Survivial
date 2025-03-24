@@ -10,9 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -26,12 +24,12 @@ public class Main extends ApplicationAdapter {
     private Texture playerTexture;
     private Sprite playerSprite;
     private Rectangle playerHitbox;
-    private ShapeRenderer visualPlayerHitbox;
+
+    private Texture abilityCircle;
+    private Circle playerAbility;
 
     private Texture enemyTexture;
-    private Sprite enemySprite;
     private Rectangle enemyHitbox;
-    private ShapeRenderer visualEnemyHitbox;
 
     private Array<Sprite> enemySprites;
 
@@ -46,6 +44,9 @@ public class Main extends ApplicationAdapter {
     private final float viewportWidth = 30;
     private final float viewportHeight = 22.5f;
 
+    private boolean useAbility = false;
+    private float abilityTimer;
+
     @Override
     public void create() {
         backgroundTexture = new Texture("City_Ruins.png");
@@ -56,12 +57,13 @@ public class Main extends ApplicationAdapter {
         playerSprite.setSize(1, 1.5f);
         playerSprite.setPosition(viewportWidth/2-1, viewportHeight/2-1);
         playerHitbox = new Rectangle();
-        visualPlayerHitbox = new ShapeRenderer();
+
+        abilityCircle = new Texture("Circle.png");
+        playerAbility = new Circle();
 
         enemyTexture = new Texture("Zombie_Sprite_Large.png");
         enemySprites = new Array<>();
         enemyHitbox = new Rectangle();
-        visualEnemyHitbox = new ShapeRenderer();
 
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(viewportWidth, viewportHeight);
@@ -102,6 +104,10 @@ public class Main extends ApplicationAdapter {
             playerSprite.translateY(speed * delta);
         }
 
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            useAbility = true;
+        }
+
         if (Gdx.input.isTouched()) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY()); // Get where the touch happened on screen
             viewport.unproject(touchPos); // Convert the units to the world units of the viewport
@@ -126,6 +132,8 @@ public class Main extends ApplicationAdapter {
         playerSprite.setY(MathUtils.clamp(playerSprite.getY(), 2.5f, viewportHeight - 6 - playerSprite.getHeight()));
         playerHitbox.set(playerSprite.getX() + 0.4f, playerSprite.getY() + 0.4f, playerSprite.getWidth() - 0.8f, playerSprite.getHeight() - 0.8f);
 
+        playerAbility.set(playerSprite.getX() + 1/2, playerSprite.getY() + 1.5f/2f, 2f);
+
         float speed = 2f;
         float delta = Gdx.graphics.getDeltaTime(); // retrieve the current delta
 
@@ -133,6 +141,14 @@ public class Main extends ApplicationAdapter {
         if (enemySpawnTimer > 3f) { // Check if it has been more than a second
             enemySpawnTimer = 0; // Reset the timer
             createEnemies(); // Create the droplet
+        }
+
+        if (useAbility) {
+            abilityTimer += delta; // Adds the current delta to the timer
+            if (abilityTimer > 0.2f) { // Check if it has been more than a second
+                useAbility = false;
+                abilityTimer = 0; // Reset the timer
+            }
         }
 
         // loop through each drop
@@ -154,7 +170,7 @@ public class Main extends ApplicationAdapter {
                 enemySprite.translateY(speed * delta);
             }
 
-            if (enemyHitbox.overlaps(playerHitbox)) {
+            if (Intersector.overlaps(playerAbility, enemyHitbox) && useAbility) {
                 enemySprites.removeIndex(index);
             }
 
@@ -163,7 +179,7 @@ public class Main extends ApplicationAdapter {
     }
 
     private void draw() {
-        ScreenUtils.clear(Color.BLACK);
+        ScreenUtils.clear(24f/ 255f, 13f/ 255f, 25f/ 255f, 1, true);
         viewport.apply();
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
         spriteBatch.begin();
@@ -172,6 +188,10 @@ public class Main extends ApplicationAdapter {
             spriteBatch.draw(platformTexture, 0, 0, viewportWidth, viewportHeight);
             playerSprite.draw(spriteBatch);
 
+            if (useAbility) {
+
+                spriteBatch.draw(abilityCircle, playerSprite.getX() - (playerSprite.getWidth()/2) - 2f, playerSprite.getY() - 2f, 4f, 4f);
+            }
             for (Sprite enemySprite : enemySprites) {
                 enemySprite.draw(spriteBatch);
             }
@@ -185,7 +205,7 @@ public class Main extends ApplicationAdapter {
         float enemyHeight = 1.5f;
 
         // create the drop sprite
-        enemySprite = new Sprite(enemyTexture);
+        Sprite enemySprite = new Sprite(enemyTexture);
         enemySprite.setSize(1, 1);
         enemySprite.setSize(enemyWidth, enemyHeight);
         enemySprite.setX(MathUtils.random(0f, viewportWidth - enemyWidth)); // Randomize the drop's x position
