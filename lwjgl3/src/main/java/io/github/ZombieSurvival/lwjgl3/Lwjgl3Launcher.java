@@ -2,7 +2,7 @@ package io.github.ZombieSurvival.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import io.github.ZombieSurvival.Main;
+import io.github.ZombieSurvival.RotNRun;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
@@ -12,7 +12,7 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new Main(), getDefaultConfiguration());
+        return new Lwjgl3Application(new RotNRun(), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
