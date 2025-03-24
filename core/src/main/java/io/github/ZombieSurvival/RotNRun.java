@@ -2,8 +2,12 @@ package io.github.ZombieSurvival;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
@@ -13,9 +17,75 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
  * @version 2025
  */
 public class RotNRun extends Game {
+    /**
+     * Virtual width of the game.
+     */
+    public static final int VIRTUAL_WIDTH = 2000;
+    /**
+     * Virtual height of the game.
+     */
+    public static final int VIRTUAL_HEIGHT = 1500;
+    /**
+     * Hold the mouses current coordinates.
+     */
+    public static final Vector2 MOUSE_POSITION = new Vector2();
+
     private SpriteBatch spriteBatch;
     private BitmapFont font;
     private FitViewport viewport;
+
+    /**
+     * Returns the viewport for this game.
+     *
+     * @return viewport as FitViewport
+     */
+    public FitViewport getViewport() {
+        return viewport;
+    }
+    /**
+     * Returns the spriteBatch for this game.
+     *
+     * @return spriteBatch as SpriteBatch
+     */
+    public SpriteBatch getSpriteBatch() {
+        return spriteBatch;
+    }
+    /**
+     * Returns the font used for this game.
+     *
+     * @return font as BitmapFont
+     */
+    public BitmapFont getFont() {
+        return font;
+    }
+    /**
+     * Applies viewport.
+     */
+    public void applyViewport() {
+        final float red = 27f / 255f;
+        final float blue = 14f / 255f;
+        final float green = 25f / 255f;
+        ScreenUtils.clear(red, blue, green, 1, true);
+
+        viewport.apply();
+        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+    }
+    /**
+     * Updates viewport by width and height.
+     *
+     * @param width an int
+     * @param height an int
+     */
+    public void updateViewport(final int width, final int height) {
+        viewport.update(width, height, true);
+    }
+    /**
+     * Automatically sets and converts the mouses coordinates to the world units of the viewport.
+     */
+    public void setMousePosition() {
+        MOUSE_POSITION.set(Gdx.input.getX(), Gdx.input.getY()); // Get where the touch happened on screen
+        viewport.unproject(MOUSE_POSITION); // Convert the units to the world units of the viewport
+    }
 
     /**
      * Initializes game variables.
@@ -26,18 +96,21 @@ public class RotNRun extends Game {
         final float defaultViewportHeight = 22.5f;
 
         spriteBatch = new SpriteBatch();
-        font = new BitmapFont(); // Using LibGDX default font
+
+        Texture fontTexture = new Texture("Custom_Font.png");
+        fontTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        font = new BitmapFont(Gdx.files.internal("assets/Custom_Font.fnt"), new TextureRegion(fontTexture));
         viewport = new FitViewport(
-            defaultViewportWidth,
-            defaultViewportHeight
+            VIRTUAL_WIDTH,
+            VIRTUAL_HEIGHT
         );
 
         // font has 15pt, but we need to scale it to our viewport by ratio
         // of viewport height to screen height
         font.setUseIntegerPositions(false);
-        font.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
-
-        // this.setScreen(new MainMenuScreen(this));
+        font.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight() - 1.5f);
+        dispose();
+        this.setScreen(new MainMenuScreen(this));
     }
 
     /**
