@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.ZombieSurvival.RotNRun;
 
 /**
@@ -17,7 +16,14 @@ import io.github.ZombieSurvival.RotNRun;
  */
 public class MainMenuScreen implements Screen {
     private final RotNRun game;
-
+    // Start Button Values
+    private final float startWidth = 900f;
+    private final float startHeight = 90f;
+    private final float startX = (RotNRun.VIRTUAL_WIDTH / 2f) - (startWidth / 2f);
+    private final float startY = (RotNRun.VIRTUAL_HEIGHT / 2f) - 90f;
+    private final float startMaxX = startX + startWidth;
+    private final float startMaxY = startY + startHeight;
+    // Textures
     private final Texture startButtonInactive;
     private final Texture startButtonActive;
 
@@ -32,7 +38,7 @@ public class MainMenuScreen implements Screen {
             throw new IllegalArgumentException("There is no game to the apply screen to.");
         }
         this.game = game;
-
+        //Textures
         startButtonInactive = new Texture("Start_Button_Inactive.png");
         startButtonActive = new Texture("Start_Button_Active.png");
     }
@@ -64,36 +70,50 @@ public class MainMenuScreen implements Screen {
         // Clears screen
         game.applyViewport();
 
-        // Draws elements to screen
+        // For brevity
         SpriteBatch batch = game.getSpriteBatch();
         BitmapFont font = game.getFont();
-        Viewport viewport = game.getViewport();
-        float xCenter = getPositionOffsetX(game.getViewport().getWorldWidth(), font, "Welcome to Rot 'N' Run!!!");
-        float yCenter = getPositionOffsetY(game.getViewport().getWorldHeight(), font, "Welcome to Rot 'N' Run!!!");
-        float x2Center = getPositionOffsetX(game.getViewport().getWorldWidth(), font, "Tap anywhere to begin!");
+        // Draw elements to screen
+        draw(batch, font);
+        // Check for input
+        input();
+
+
+    }
+
+    private void draw(SpriteBatch batch, BitmapFont font) {
+        // Numbers
+        float xCenter = getPositionOffsetX(RotNRun.VIRTUAL_WIDTH, font,
+            "Welcome to Rot 'N' Run!!!");
+        float yCenter = getPositionOffsetY(RotNRun.VIRTUAL_HEIGHT, font,
+            "Welcome to Rot 'N' Run!!!");
+        float x2Center = getPositionOffsetX(RotNRun.VIRTUAL_WIDTH, font,
+            "Click START to begin!");
+        final float welcomeTextY = yCenter + 300f;
+        final float interactTextY = yCenter + 220f;
+        // Draws elements to screen
         batch.begin();
-            //draw text. Remember that x and y are in meters
-            font.draw(batch, "Welcome to Rot 'N' Run!!!", xCenter, yCenter + 300f);
-            font.draw(batch, "Tap anywhere to begin!", x2Center, yCenter + 220);
+        font.draw(batch, "Welcome to Rot 'N' Run!!!", xCenter, welcomeTextY);
+        font.draw(batch, "Click START to begin!", x2Center, interactTextY);
 
-            game.setMousePosition();
-
-            if ((RotNRun.MOUSE_POSITION.x >= viewport.getWorldWidth() / 2 - 450 && RotNRun.MOUSE_POSITION.x <= viewport.getWorldWidth() / 2 + 450)
-            && (RotNRun.MOUSE_POSITION.y >= yCenter - 80 && RotNRun.MOUSE_POSITION.y <= yCenter - 80 + 90)) {
-                batch.draw(startButtonActive, viewport.getWorldWidth() / 2 - 450, yCenter - 80, 900, 90);
-            } else {
-                batch.draw(startButtonInactive, viewport.getWorldWidth() / 2 - 450, yCenter - 80, 900, 90);
-            }
-
-
-
+        // Display button logic
+        game.setMousePosition();
+        // Start Button
+        if ((RotNRun.MOUSE_POSITION.x >= startX && RotNRun.MOUSE_POSITION.x <= startMaxX)
+            && (RotNRun.MOUSE_POSITION.y >= startY && RotNRun.MOUSE_POSITION.y <= startMaxY)) {
+            batch.draw(startButtonActive, startX, startY, startWidth, startHeight);
+        } else {
+            batch.draw(startButtonInactive, startX, startY, startWidth, startHeight);
+        }
         batch.end();
+    }
 
-        // Game start on touch
+    private void input() {
+        // Game start on click start
         if (Gdx.input.isTouched()) {
             game.setMousePosition();
-            if ((RotNRun.MOUSE_POSITION.x >= RotNRun.VIRTUAL_WIDTH / 2 - 450 && RotNRun.MOUSE_POSITION.x <= RotNRun.VIRTUAL_WIDTH / 2 + 450)
-                && (RotNRun.MOUSE_POSITION.y >= yCenter - 80 && RotNRun.MOUSE_POSITION.y <= yCenter - 80 + 90)) {
+            if ((RotNRun.MOUSE_POSITION.x >= startX && RotNRun.MOUSE_POSITION.x <= startMaxX)
+                && (RotNRun.MOUSE_POSITION.y >= startY && RotNRun.MOUSE_POSITION.y <= startMaxY)) {
                 game.setScreen(new GameScreen(game));
                 dispose();
             }
