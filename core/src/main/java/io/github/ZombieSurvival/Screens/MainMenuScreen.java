@@ -21,7 +21,7 @@ public class MainMenuScreen implements Screen {
     private final float startWidth = 900f;
     private final float startHeight = 90f;
     private final float startX = (RotNRun.VIRTUAL_WIDTH / 2f) - (startWidth / 2f);
-    private final float startY = (RotNRun.VIRTUAL_HEIGHT / 2f) - 60f;
+    private final float startY = 500f;
     private final float startMaxX = startX + startWidth;
     private final float startMaxY = startY + startHeight;
     private final float buttonLayoutOffsetY = -150f;
@@ -29,7 +29,13 @@ public class MainMenuScreen implements Screen {
     private final float exitLength = 150f;
     private final float exitXY = 100f;
     private final float exitMaxXY = exitXY + exitLength;
+    // Title Values
+    private final float titleWidth = 1200f;
+    private final float titleHeight = 600f;
+    private final float titleX = (RotNRun.VIRTUAL_WIDTH / 2f) - (titleWidth / 2f);
+    private final float titleY = startY + 200f;
     // Textures
+    private final Texture gameTitle;
     private final Texture startButtonInactive;
     private final Texture startButtonActive;
     private final Texture exitButtonInactive;
@@ -47,6 +53,7 @@ public class MainMenuScreen implements Screen {
         }
         this.game = game;
         //Textures
+        gameTitle = new Texture("Game_Title.png");
         startButtonInactive = new Texture("Start_Button_Inactive.png");
         startButtonActive = new Texture("Start_Button_Active.png");
         exitButtonInactive = new Texture("Exit_Button_Inactive.png");
@@ -56,20 +63,6 @@ public class MainMenuScreen implements Screen {
     @Override
     public void show() {
 
-    }
-
-    private float getPositionOffsetX(final float frameWidth, final BitmapFont bitmapFont,
-                                     final String value) {
-        GlyphLayout glyphLayout = new GlyphLayout();
-        glyphLayout.setText(bitmapFont, value);
-        return (frameWidth / 2) - (glyphLayout.width / 2);
-    }
-
-    private float getPositionOffsetY(final float frameHeight, final BitmapFont bitmapFont,
-                                     final String value) {
-        GlyphLayout glyphLayout = new GlyphLayout();
-        glyphLayout.setText(bitmapFont, value);
-        return (frameHeight / 2) - (glyphLayout.height / 2);
     }
 
     /**
@@ -87,26 +80,15 @@ public class MainMenuScreen implements Screen {
         BitmapFont font = game.getFont();
         // Draw elements to screen
         batch.begin();
-            drawTitle(batch, font);
+            drawTitle(batch);
             drawButtons(batch);
         batch.end();
         // Check for input
         input();
     }
 
-    private void drawTitle(final SpriteBatch batch, final BitmapFont font) {
-        // Numbers
-        float xCenter = getPositionOffsetX(RotNRun.VIRTUAL_WIDTH, font,
-            "Welcome to Rot 'N' Run!!!");
-        float yCenter = getPositionOffsetY(RotNRun.VIRTUAL_HEIGHT, font,
-            "Welcome to Rot 'N' Run!!!");
-        float x2Center = getPositionOffsetX(RotNRun.VIRTUAL_WIDTH, font,
-            "Click START to begin!");
-        final float welcomeTextY = yCenter + 300f;
-        final float interactTextY = yCenter + 220f;
-        // Draws elements to screen
-        font.draw(batch, "Welcome to Rot 'N' Run!!!", xCenter, welcomeTextY);
-        font.draw(batch, "Click START to begin!", x2Center, interactTextY);
+    private void drawTitle(final SpriteBatch batch) {
+        batch.draw(gameTitle, titleX, titleY, titleWidth, titleHeight);
     }
 
     private void drawButtons(final SpriteBatch batch) {
