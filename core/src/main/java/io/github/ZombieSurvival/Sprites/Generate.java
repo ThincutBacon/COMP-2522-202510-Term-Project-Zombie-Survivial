@@ -9,19 +9,11 @@ import com.badlogic.gdx.graphics.Texture;
  * @version 2025
  */
 public final class Generate {
-    private Generate instance = null;
-
     private Generate() { }
 
-    public Generate getInstance() {
-        if (instance == null) {
-            instance = new Generate();
-        }
-        return instance;
-    }
-
+    // Player
     /**
-     * Creates an instance of Player based on the selected difficulty.
+     * Creates a Player with stats based on the selected difficulty.
      *
      * @param texture a Texture
      * @param difficulty as Difficulty
@@ -52,5 +44,110 @@ public final class Generate {
             default:
                 throw new IllegalArgumentException("Invalid difficulty value.");
         }
+    }
+    // Enemies
+    /**
+     * Creates a Standard Zombie Enemy.
+     *
+     * @param texture a Texture
+     * @return the created Enemy object
+     */
+    public static Enemy createStandardZombie(final Texture texture) {
+        final int attackValue = 1;
+        final float speed = 5f;
+
+        return new Enemy(texture, attackValue, speed);
+    }
+    // Items
+    // HP
+    /**
+     * Creates a Bandage Item. A minor healing item.
+     *
+     * @param texture a Texture
+     * @return the created Item object
+     */
+    public static Item createBandage(final Texture texture) {
+        final int increaseValue = 1;
+
+        return new Item(texture, increaseValue, ItemType.HP);
+    }
+    /**
+     * Creates a Med Kit Item. A major healing item.
+     *
+     * @param texture a Texture
+     * @return the created Item object
+     */
+    public static Item createMedKit(final Texture texture) {
+        final int increaseValue = 3;
+
+        return new Item(texture, increaseValue, ItemType.HP);
+    }
+    // Stamina
+    /**
+     * Creates a Water Bottle Item. A minor stamina item.
+     *
+     * @param texture a Texture
+     * @return the created Item object
+     */
+    public static Item createWaterBottle(final Texture texture) {
+        final int increaseValue = 5;
+
+        return new Item(texture, increaseValue, ItemType.STAMINA);
+    }
+    /**
+     * Creates a Apple Item. A medium stamina item.
+     *
+     * @param texture a Texture
+     * @return the created Item object
+     */
+    public static Item createApple(final Texture texture) {
+        final int increaseValue = 15;
+
+        return new Item(texture, increaseValue, ItemType.STAMINA);
+    }
+    /**
+     * Creates a Sandwich Item. A major stamina item.
+     *
+     * @param texture a Texture
+     * @return the created Item object
+     */
+    public static Item createSandwich(final Texture texture) {
+        final int increaseValue = 25;
+
+        return new Item(texture, increaseValue, ItemType.STAMINA);
+    }
+    // Score
+    /**
+     * Creates a Nails Item. A minor score item.
+     *
+     * @param texture a Texture
+     * @return the created Item object
+     */
+    public static Item createNails(final Texture texture) {
+        final int increaseValue = 1;
+
+        return new Item(texture, increaseValue, ItemType.SCORE);
+    }
+    /**
+     * Creates a Wooden Plank Item. A medium score item.
+     *
+     * @param texture a Texture
+     * @return the created Item object
+     */
+    public static Item createWoodenPlank(final Texture texture) {
+        final int increaseValue = 3;
+
+        return new Item(texture, increaseValue, ItemType.SCORE);
+    }
+    /**
+     * Creates a Metal Sheet Item. A major score item.
+     *
+     * @param texture a Texture
+     * @return the created Item object
+     */
+    public static Item createMetalSheet(final Texture texture) {
+        final int increaseValue = 5;
+
+        return new Item(texture, increaseValue, ItemType.SCORE);
     }
 }
