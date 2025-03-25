@@ -1,12 +1,15 @@
 package io.github.ZombieSurvival;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.Texture;
+
 /**
  * The character the player controls.
  *
  * @author Kanon Nishiyama
  * @version 2025
  */
-public class Player {
+public class Player extends Sprite {
     private final int maxHP;
     private final int maxStamina;
     private final int maxCharge;
@@ -14,13 +17,12 @@ public class Player {
     private int currentStamina;
     private int currentCharge;
     private boolean isCharged;
-    private int xCoordinate;
-    private int yCoordinate;
     private int currentScore;
 
     /**
      * Constructs a Player object with a specified maxHP, maxStamina, and maxCharge.
      *
+     * @param texture a Texture
      * @param maxHP an int
      * @param maxStamina an int
      * @param maxCharge an int
@@ -28,7 +30,9 @@ public class Player {
      * @throws IllegalArgumentException if maxStamina is smaller or equal to 0
      * @throws IllegalArgumentException if maxCharge is smaller or equal to 0
      */
-    public Player(final int maxHP, final int maxStamina, final int maxCharge) {
+    public Player(final Texture texture, final int maxHP, final int maxStamina, final int maxCharge) {
+        // Sprite
+        super(texture);
         // Set HP max value
         if (maxHP <= 0) {
             throw new IllegalArgumentException("maxHP must be a larger then 0.");
@@ -50,8 +54,6 @@ public class Player {
         // Set default values
         currentCharge = 0;
         isCharged = false;
-        xCoordinate = 0;
-        yCoordinate = 0;
         currentScore = 0;
     }
 
@@ -142,47 +144,6 @@ public class Player {
             isCharged = false;
         }
     }
-    // Location related methods
-    /**
-     * Returns the xCoordinate of this Player.
-     *
-     * @return xCoordinate as int
-     */
-    public int getXCoordinate() {
-        return xCoordinate;
-    }
-    /**
-     * Returns the yCoordinate of this Player.
-     *
-     * @return yCoordinate as int
-     */
-    public int getYCoordinate() {
-        return yCoordinate;
-    }
-    /**
-     * Moves the player in the specified direction.
-     *
-     * @param direction a Direction
-     * @throws IllegalArgumentException if direction is not an expected direction
-     */
-    public void movePlayer(final Direction direction) {
-         switch (direction) {
-             case N:
-                 yCoordinate += 1;
-                 break;
-             case E:
-                 xCoordinate -= 1;
-                 break;
-             case W:
-                 xCoordinate += 1;
-                 break;
-             case S:
-                 yCoordinate -= 1;
-                 break;
-             default:
-                 throw new IllegalArgumentException("Invalid directional input.");
-         }
-    }
     // Score related methods
     /**
      * Returns the currentScore of this Player.
@@ -225,8 +186,6 @@ public class Player {
             && getCurrentStamina() == player.getCurrentStamina()
             && getCurrentCharge() == player.getCurrentCharge()
             && getIsCharged() == player.getIsCharged()
-            && getXCoordinate() == player.getXCoordinate()
-            && getYCoordinate() == player.getYCoordinate()
             && getCurrentScore() == player.getCurrentScore();
     }
 
@@ -251,8 +210,6 @@ public class Player {
         } else {
             result = usefulPrime * result;
         }
-        result = usefulPrime * result + getXCoordinate();
-        result = usefulPrime * result + getYCoordinate();
         result = usefulPrime * result + getCurrentScore();
         return result;
     }
@@ -265,17 +222,15 @@ public class Player {
     @Override
     public String toString() {
         final StringBuilder builder;
-        builder = new StringBuilder("Player{\n");
-        builder.append("maxHP='").append(getMaxHP()).append("', \n");
-        builder.append("maxStamina='").append(getMaxStamina()).append("', \n");
-        builder.append("maxCharge='").append(maxCharge).append("', \n");
-        builder.append("currentHP='").append(getCurrentStamina()).append("', \n");
-        builder.append("currentStamina='").append(getMaxStamina()).append("', \n");
-        builder.append("currentCharge='").append(getCurrentCharge()).append("', \n");
-        builder.append("isCharged='").append(getIsCharged()).append("', \n");
-        builder.append("xCoordinate='").append(getXCoordinate()).append("', \n");
-        builder.append("yCoordinate='").append(getYCoordinate()).append("', \n");
-        builder.append("currentScore='").append(getCurrentScore());
+        builder = new StringBuilder("Player{");
+        builder.append("maxHP=").append(getMaxHP()).append(", ");
+        builder.append("maxStamina=").append(getMaxStamina()).append(", ");
+        builder.append("maxCharge=").append(maxCharge).append(", ");
+        builder.append("currentHP=").append(getCurrentStamina()).append(", ");
+        builder.append("currentStamina=").append(getMaxStamina()).append(", ");
+        builder.append("currentCharge=").append(getCurrentCharge()).append(", ");
+        builder.append("isCharged=").append(getIsCharged()).append(", ");
+        builder.append("currentScore=").append(getCurrentScore());
         builder.append("\n}");
         return builder.toString();
     }
