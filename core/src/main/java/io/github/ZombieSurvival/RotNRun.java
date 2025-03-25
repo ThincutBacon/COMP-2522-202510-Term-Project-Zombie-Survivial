@@ -81,6 +81,23 @@ public class RotNRun extends Game {
         // Convert the units to the world units of the viewport
         viewport.unproject(MOUSE_POSITION);
     }
+    /**
+     * Checks to see if the mouse is within the set range of coordinates.
+     *
+     * @param minX a float
+     * @param maxX a float
+     * @param minY a float
+     * @param maxY a float
+     * @return true if the mouse is within the range, otherwise false
+     */
+    public boolean checkMouseOnButton(final float minX, final float maxX,
+                                      final float minY, final float maxY) {
+        setMousePosition();
+        return (RotNRun.MOUSE_POSITION.x >= minX
+            && RotNRun.MOUSE_POSITION.x <= maxX)
+            && (RotNRun.MOUSE_POSITION.y >= minY
+            && RotNRun.MOUSE_POSITION.y <= maxY);
+    }
 
     /**
      * Initializes game variables.
