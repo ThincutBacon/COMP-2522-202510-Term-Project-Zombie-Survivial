@@ -1,9 +1,15 @@
-package io.github.ZombieSurvival;
+package io.github.ZombieSurvival.Sprites;
 
-public class Enemy extends Entity {
-    private int speed;
-    private int currentXCoordinate;
-    private int currentYCoordinate;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+
+/**
+ * An interactable enemy entity.
+ *
+ * @author Kanon Nishiyama
+ * @version 2025
+ */
+public class Enemy extends Sprite {
+    private final int speed;
 
     /**
      * Constructs an Enemy object with the specified value, xCoordinate, and yCoordinate,
@@ -126,8 +132,6 @@ public class Enemy extends Entity {
         final StringBuilder builder;
         builder = new StringBuilder("Enemy{\n");
         builder.append("value='").append(this.value).append("', \n");
-        builder.append("xCoordinate=").append(getXCoordinate()).append(", \n");
-        builder.append("yCoordinate='").append(getYCoordinate()).append(", \n");
         builder.append("speed='").append(this.speed).append(", \n");
         builder.append("currentXCoordinate=").append(getCurrentXCoordinate()).append(", \n");
         builder.append("currentYCoordinate='").append(getCurrentYCoordinate());

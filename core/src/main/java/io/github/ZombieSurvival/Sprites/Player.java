@@ -1,4 +1,4 @@
-package io.github.ZombieSurvival;
+package io.github.ZombieSurvival.Sprites;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.Texture;

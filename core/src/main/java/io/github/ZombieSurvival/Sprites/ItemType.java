@@ -1,4 +1,4 @@
-package io.github.ZombieSurvival;
+package io.github.ZombieSurvival.Sprites;
 
 /**
  * Item type representing the affected player status.

@@ -1,4 +1,6 @@
-package io.github.ZombieSurvival;
+package io.github.ZombieSurvival.Sprites;
+
+import com.badlogic.gdx.graphics.Texture;
 
 /**
  * Generates entities with preset status values.
@@ -21,11 +23,12 @@ public final class Generate {
     /**
      * Creates an instance of Player based on the selected difficulty.
      *
+     * @param texture a Texture
      * @param difficulty as Difficulty
      * @return the created Player object
      * @throws IllegalArgumentException if difficulty is null or an unexpected option
      */
-    public static Player createPlayer(final Difficulty difficulty) {
+    public static Player createPlayer(final Texture texture, final Difficulty difficulty) {
         // Easy
         final int easyHP = 5;
         final int easyStamina = 100;
@@ -41,11 +44,11 @@ public final class Generate {
         // Create Player
         switch (difficulty) {
             case EASY:
-                return new Player(easyHP, easyStamina, easyCharge);
+                return new Player(texture, easyHP, easyStamina, easyCharge);
             case NORMAL:
-                return new Player(normalHP, normalStamina, normalCharge);
+                return new Player(texture, normalHP, normalStamina, normalCharge);
             case HARD:
-                return new Player(hardHP, hardStamina, hardCharge);
+                return new Player(texture, hardHP, hardStamina, hardCharge);
             default:
                 throw new IllegalArgumentException("Invalid difficulty value.");
         }
