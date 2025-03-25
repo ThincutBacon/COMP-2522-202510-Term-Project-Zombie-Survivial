@@ -1,5 +1,7 @@
 package io.github.ZombieSurvival.Screens;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -21,30 +23,33 @@ import io.github.ZombieSurvival.RotNRun;
  * @version 2025
  */
 public class GameScreen implements Screen {
+    // Sprite size
+    private static final float SPRITE_WIDTH = 80f;
+    private static final float SPRITE_HEIGHT = 1.5f * SPRITE_WIDTH;
+    // Player movement speed
+    private static final float PLAYER_SPEED = 20f;
+
     // Current running game
     private final RotNRun game;
-    // Sprite size
-    private final float spriteWidth = 80f;
-    private final float spriteHeight = 1.5f * spriteWidth;
-
     // Background
-    private Texture backgroundTexture;
-    private Texture platformTexture;
+    private final Texture backgroundTexture;
+    private final Texture platformTexture;
     // Player
-    private Texture playerTexture;
-    private Player playerSprite;
-    private Rectangle playerHitbox;
+    private final Texture playerTexture;
+    private final Player playerSprite;
+    private final Rectangle playerHitbox;
     // Enemy
-    private Texture standardZombieTexture;
-    private Array<Enemy> enemySprites;
-    private Rectangle enemyHitbox;
+    private final Texture standardZombieTexture;
+    private final Array<Enemy> enemySprites;
+    private final Rectangle enemyHitbox;
     // Item
-    private Array<Item> itemSprites;
-    private Rectangle itemHitbox;
+    private final Array<Item> itemSprites;
+    private final Rectangle itemHitbox;
     // Backend
+    private final long startGameInMilliSeconds;
+    private float abilityChargeTimer;
     private float enemySpawnTimer;
     private float itemSpawnTimer;
-    private long startGameInMilliSeconds;
 
     public GameScreen(final RotNRun game) {
         this.game = game;
@@ -56,7 +61,7 @@ public class GameScreen implements Screen {
         playerTexture = new Texture("Player_Sprite_Large.png");
         playerHitbox = new Rectangle();
         playerSprite = Generate.createPlayer(playerTexture, Difficulty.NORMAL);
-        playerSprite.setSize(spriteWidth, spriteHeight);
+        playerSprite.setSize(SPRITE_WIDTH, SPRITE_HEIGHT);
         playerSprite.setCenter((RotNRun.VIRTUAL_WIDTH / 2f), (RotNRun.VIRTUAL_HEIGHT / 2f));
         // Enemies
         standardZombieTexture = new Texture("Zombie_Sprite_Large.png");
@@ -66,6 +71,7 @@ public class GameScreen implements Screen {
         itemSprites = new Array<>();
         itemHitbox = new Rectangle();
         // Backend
+        abilityChargeTimer = 0;
         enemySpawnTimer = 0;
         itemSpawnTimer = 0;
         startGameInMilliSeconds = TimeUtils.millis();
@@ -86,6 +92,11 @@ public class GameScreen implements Screen {
         BitmapFont font = game.getFont();
         // Draw elements to screen
         draw(batch, font);
+        // Check for inputs
+        if (Gdx.input.isTouched()) {
+            inputMovementTouch(delta);
+        }
+        inputMovementKeys(delta);
     }
 
     private void draw(final SpriteBatch batch, final BitmapFont font) {
@@ -105,6 +116,47 @@ public class GameScreen implements Screen {
                 enemy.draw(batch);
             }
         batch.end();
+    }
+
+    private void inputMovementTouch(final float delta) {
+        game.setMousePosition();
+        if (playerSprite.getX() > RotNRun.MOUSE_POSITION.x) {
+            playerSprite.translateX(-PLAYER_SPEED * delta);
+        }
+        if (playerSprite.getX() < RotNRun.MOUSE_POSITION.x) {
+            playerSprite.translateX(PLAYER_SPEED * delta);
+        }
+
+        if (playerSprite.getY() > RotNRun.MOUSE_POSITION.y) {
+            playerSprite.translateY(-PLAYER_SPEED * delta);
+        }
+        if (playerSprite.getY() < RotNRun.MOUSE_POSITION.y) {
+            playerSprite.translateY(PLAYER_SPEED * delta);
+        }
+    }
+
+    private void inputMovementKeys(final float delta) {
+        game.setMousePosition();
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+            || Gdx.input.isKeyPressed(Input.Keys.D)
+            || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_6)) {
+            playerSprite.translateX(PLAYER_SPEED * delta);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)
+            || Gdx.input.isKeyPressed(Input.Keys.A)
+            || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_4)) {
+            playerSprite.translateX(-PLAYER_SPEED * delta);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)
+            || Gdx.input.isKeyPressed(Input.Keys.S)
+            || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_2)) {
+            playerSprite.translateY(-PLAYER_SPEED * delta);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)
+            || Gdx.input.isKeyPressed(Input.Keys.W)
+            || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_8)) {
+            playerSprite.translateY(PLAYER_SPEED * delta);
+        }
     }
 
     @Override
