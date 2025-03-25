@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
  */
 public class Enemy extends Sprite {
     private final int attackValue;
-    private final int speed;
+    private final float speed;
 
     /**
      * Constructs an Enemy object with the specified attackValue and speed.
@@ -21,7 +21,7 @@ public class Enemy extends Sprite {
      * @param speed an int
      * @throws IllegalArgumentException if attackValue or speed is a negative integer
      */
-    public Enemy(final Texture texture, final int attackValue, final int speed) {
+    public Enemy(final Texture texture, final int attackValue, final float speed) {
         super(texture);
         if (attackValue < 0) {
             throw new IllegalArgumentException("Attack Value cannot be negative.");
@@ -33,6 +33,14 @@ public class Enemy extends Sprite {
         this.speed = speed;
     }
 
+    /**
+     * Returns the speed of this Enemy.
+     *
+     * @return type as String
+     */
+    float getSpeed() {
+        return speed;
+    }
     /**
      * Decreases the Player's HP by value.
      *
@@ -75,7 +83,7 @@ public class Enemy extends Sprite {
         int result;
 
         result = attackValue;
-        result = usefulPrime * result + speed;
+        result = usefulPrime * result + Float.hashCode(speed);
         return result;
     }
 
