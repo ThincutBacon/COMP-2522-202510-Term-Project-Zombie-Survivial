@@ -9,76 +9,34 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
  * @version 2025
  */
 public class Enemy extends Sprite {
+    private final int attackValue;
     private final int speed;
 
     /**
-     * Constructs an Enemy object with the specified value, xCoordinate, and yCoordinate,
-     * and speed.
+     * Constructs an Enemy object with the specified attackValue and speed.
      *
-     * @param value an int
-     * @param xCoordinate an int
-     * @param yCoordinate an int
+     * @param attackValue an int
      * @param speed an int
-     * @throws IllegalArgumentException if speed in smaller or equal to 0
+     * @throws IllegalArgumentException if attackValue or speed is a negative integer
      */
-    public Enemy(final int value, final int xCoordinate, final int yCoordinate,
-                 final int speed) {
-        super(value, xCoordinate, yCoordinate);
-        if (speed <= 0) {
-            throw new IllegalArgumentException("Speed must be a non-zero positive integer.");
+    public Enemy(final int attackValue, final int speed) {
+        if (attackValue < 0) {
+            throw new IllegalArgumentException("Attack Value cannot be negative.");
+        }
+        this.attackValue = attackValue;
+        if (speed < 0) {
+            throw new IllegalArgumentException("Speed cannot be negative.");
         }
         this.speed = speed;
     }
 
     /**
-     * Returns the currentXCoordinate of this Enemy.
-     *
-     * @return currentXCoordinate as int
-     */
-    public int getCurrentXCoordinate() {
-        return currentXCoordinate;
-    }
-    /**
-     * Returns the currentYCoordinate of this Enemy.
-     *
-     * @return currentYCoordinate as int
-     */
-    public int getCurrentYCoordinate() {
-        return currentYCoordinate;
-    }
-    /**
-     * Moves the player in the specified direction.
-     *
-     * @param direction a Direction
-     * @throws IllegalArgumentException if direction is not an expected direction
-     */
-    public void moveEnemy(final Direction direction) {
-        switch (direction) {
-            case N:
-                currentYCoordinate += speed;
-                break;
-            case E:
-                currentXCoordinate -= speed;
-                break;
-            case W:
-                currentXCoordinate += speed;
-                break;
-            case S:
-                currentYCoordinate -= speed;
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid directional input.");
-        }
-    }
-
-    /**
-     * Modifies the Player's HP by value.
+     * Decreases the Player's HP by value.
      *
      * @param player a Player
      */
-    @Override
     void modifyPlayerStat(final Player player) {
-        player.modifyCurrentHP(value);
+        player.modifyCurrentHP(-attackValue);
     }
 
     /**
@@ -99,10 +57,8 @@ public class Enemy extends Sprite {
         Enemy enemy = (Enemy) object;
 
         return
-            super.equals(enemy)
-            && this.speed == enemy.speed
-            && getCurrentXCoordinate() == enemy.getCurrentXCoordinate()
-            && getCurrentYCoordinate() == enemy.getCurrentYCoordinate();
+            (this.attackValue == enemy.attackValue
+            && this.speed == enemy.speed);
     }
 
     /**
@@ -115,10 +71,8 @@ public class Enemy extends Sprite {
         final int usefulPrime = 23;
         int result;
 
-        result = super.hashCode();
-        result = usefulPrime * result + this.speed;
-        result = usefulPrime * result + getCurrentXCoordinate();
-        result = usefulPrime * result + getCurrentYCoordinate();
+        result = attackValue;
+        result = usefulPrime * result + speed;
         return result;
     }
 
@@ -131,10 +85,8 @@ public class Enemy extends Sprite {
     public String toString() {
         final StringBuilder builder;
         builder = new StringBuilder("Enemy{\n");
-        builder.append("value='").append(this.value).append("', \n");
-        builder.append("speed='").append(this.speed).append(", \n");
-        builder.append("currentXCoordinate=").append(getCurrentXCoordinate()).append(", \n");
-        builder.append("currentYCoordinate='").append(getCurrentYCoordinate());
+        builder.append("attackValue=").append(this.attackValue).append(", \n");
+        builder.append("speed=").append(this.speed);
         builder.append("\n}");
         return builder.toString();
     }
