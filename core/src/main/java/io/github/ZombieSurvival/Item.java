@@ -1,45 +1,52 @@
 package io.github.ZombieSurvival;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
+
 /**
  * An interactable item entity.
  *
  * @author Kanon Nishiyama
  * @version 2025
  */
-public class Item extends Entity {
+public class Item extends Sprite {
     private final ItemType itemType;
+    private final int increaseValue;
 
     /**
-     * Constructs an Item object with the specified value, xCoordinate, and yCoordinate,
-     * and itemType.
+     * Constructs an Item object with the specified increaseValue and itemType.
      *
-     * @param value an int
-     * @param xCoordinate an int
-     * @param yCoordinate an int
+     * @param increaseValue an int
      * @param itemType an int
+     * @throws IllegalArgumentException if itemType is a null
+     * @throws IllegalArgumentException if increaseValue is a negative integer
      */
-    public Item(final int value, final int xCoordinate, final int yCoordinate,
-                final ItemType itemType) {
-        super(value, xCoordinate, yCoordinate);
+    public Item(final int increaseValue, final ItemType itemType) {
+        if (itemType == null) {
+            throw new IllegalArgumentException("Item type cannot be null.");
+        }
         this.itemType = itemType;
+        if (increaseValue < 0) {
+            throw new IllegalArgumentException("Item value cannot be negative.");
+        }
+        this.increaseValue = increaseValue;
     }
 
     /**
-     * Modifies the Player's stat, specified by the itemType, by value.
+     * Increases the Player's stat, specified by the itemType, by increaseValue.
      *
      * @param player a Player
+     * @throws IllegalArgumentException if itemType is not an expected ItemType option
      */
-    @Override
-    void modifyPlayerStat(final Player player) {
+    void increasePlayerStat(final Player player) {
         switch (itemType) {
             case HP:
-                player.modifyCurrentHP(value);
+                player.modifyCurrentHP(increaseValue);
                 break;
-            case
-                STAMINA: player.modifyCurrentStamina(value);
+            case STAMINA:
+                player.modifyCurrentStamina(increaseValue);
                 break;
-            case
-                SCORE: player.modifyCurrentScore(value);
+            case SCORE:
+                player.modifyCurrentScore(increaseValue);
                 break;
             default: throw new IllegalArgumentException("Not a valid itemType");
         }
@@ -63,8 +70,8 @@ public class Item extends Entity {
         Item item = (Item) object;
 
         return
-            super.equals(item)
-            && this.itemType == item.itemType;
+            (this.itemType == item.itemType
+            && this.increaseValue == item.increaseValue);
     }
 
     /**
@@ -77,8 +84,8 @@ public class Item extends Entity {
         final int usefulPrime = 23;
         int result;
 
-        result = super.hashCode();
-        result = usefulPrime * result + this.itemType.hashCode();
+        result = itemType.hashCode();
+        result = usefulPrime * result + increaseValue;
         return result;
     }
 
@@ -91,10 +98,8 @@ public class Item extends Entity {
     public String toString() {
         final StringBuilder builder;
         builder = new StringBuilder("Item{\n");
-        builder.append("value='").append(this.value).append("', \n");
-        builder.append("xCoordinate=").append(getXCoordinate()).append(", \n");
-        builder.append("yCoordinate='").append(getYCoordinate()).append(", \n");
-        builder.append("itemType='").append(this.itemType);
+        builder.append("itemType=").append(this.itemType).append(", \n");
+        builder.append("increaseValue=").append(this.increaseValue);
         builder.append("\n}");
         return builder.toString();
     }
