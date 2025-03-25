@@ -36,14 +36,6 @@ public class RotNRun extends Game {
     private FitViewport viewport;
 
     /**
-     * Returns the viewport for this game.
-     *
-     * @return viewport as FitViewport
-     */
-    public FitViewport getViewport() {
-        return viewport;
-    }
-    /**
      * Returns the spriteBatch for this game.
      *
      * @return spriteBatch as SpriteBatch
