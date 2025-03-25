@@ -1,6 +1,5 @@
-package io.github.ZombieSurvival;
+package io.github.ZombieSurvival.Screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -13,6 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.graphics.Color;
+import io.github.ZombieSurvival.Sprites.Generate;
+import io.github.ZombieSurvival.RotNRun;
+import io.github.ZombieSurvival.Sprites.Difficulty;
+import io.github.ZombieSurvival.Sprites.Player;
 
 import java.awt.*;
 
@@ -66,7 +69,7 @@ public class GameScreen implements Screen {
         worldXCenter = worldWidth / 2;
         worldYCenter = worldHeight / 2;
 
-        playerStats = Generate.createPlayer(Difficulty.NORMAL);
+        playerStats = Generate.createPlayer(playerTexture, Difficulty.NORMAL);
         // Load images
         backgroundTexture = new Texture("City_Ruins.png");
         playerTexture = new Texture("Player_Sprite_Large.png");

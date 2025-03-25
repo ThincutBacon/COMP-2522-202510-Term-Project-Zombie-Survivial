@@ -1,4 +1,4 @@
-package io.github.ZombieSurvival;
+package io.github.ZombieSurvival.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.ZombieSurvival.RotNRun;
 
 /**
  * The main menu of the game.
