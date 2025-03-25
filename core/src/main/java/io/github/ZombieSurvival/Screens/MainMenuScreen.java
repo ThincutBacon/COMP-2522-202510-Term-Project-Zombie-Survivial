@@ -3,7 +3,6 @@ package io.github.ZombieSurvival.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.ZombieSurvival.RotNRun;
 
@@ -28,11 +27,6 @@ public class MainMenuScreen implements Screen {
     private final float exitLength = 150f;
     private final float exitXY = 100f;
     private final float exitMaxXY = exitXY + exitLength;
-    // Title Values
-    private final float titleWidth = 1200f;
-    private final float titleHeight = 600f;
-    private final float titleX = (RotNRun.VIRTUAL_WIDTH / 2f) - (titleWidth / 2f);
-    private final float titleY = startY + 200f;
     // Textures
     private final Texture gameTitle;
     private final Texture startButtonInactive;
@@ -76,7 +70,6 @@ public class MainMenuScreen implements Screen {
 
         // For brevity
         SpriteBatch batch = game.getSpriteBatch();
-        BitmapFont font = game.getFont();
         // Draw elements to screen
         batch.begin();
             drawTitle(batch);
@@ -86,10 +79,21 @@ public class MainMenuScreen implements Screen {
         input();
     }
 
+    /*
+     * Draws the title texture to screen
+     */
     private void drawTitle(final SpriteBatch batch) {
+        // Title Values
+        final float titleWidth = 1200f;
+        final float titleHeight = 600f;
+        final float titleX = (RotNRun.VIRTUAL_WIDTH / 2f) - (titleWidth / 2f);
+        final float titleY = startY + 200f;
         batch.draw(gameTitle, titleX, titleY, titleWidth, titleHeight);
     }
 
+    /*
+     * Draws the button textures to screen
+     */
     private void drawButtons(final SpriteBatch batch) {
         // Display button logic
         game.setMousePosition();
@@ -116,6 +120,9 @@ public class MainMenuScreen implements Screen {
         }
     }
 
+    /*
+     * Checks for user input
+     */
     private void input() {
         // On click
         if (Gdx.input.isTouched()) {
@@ -138,6 +145,12 @@ public class MainMenuScreen implements Screen {
         }
     }
 
+    /**
+     * Updates viewport by width and height when window is resized.
+     *
+     * @param width an int
+     * @param height an int
+     */
     @Override
     public void resize(final int width, final int height) {
         game.updateViewport(width, height);
