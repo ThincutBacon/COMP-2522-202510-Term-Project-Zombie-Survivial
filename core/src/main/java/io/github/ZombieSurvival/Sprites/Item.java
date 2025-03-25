@@ -1,5 +1,6 @@
 package io.github.ZombieSurvival.Sprites;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 /**
@@ -15,12 +16,14 @@ public class Item extends Sprite {
     /**
      * Constructs an Item object with the specified increaseValue and itemType.
      *
+     * @param texture a Texture
      * @param increaseValue an int
      * @param itemType an int
      * @throws IllegalArgumentException if itemType is a null
      * @throws IllegalArgumentException if increaseValue is a negative integer
      */
-    public Item(final int increaseValue, final ItemType itemType) {
+    public Item(final Texture texture, final int increaseValue, final ItemType itemType) {
+        super(texture);
         if (itemType == null) {
             throw new IllegalArgumentException("Item type cannot be null.");
         }

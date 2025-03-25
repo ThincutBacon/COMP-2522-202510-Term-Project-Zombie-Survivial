@@ -1,5 +1,6 @@
 package io.github.ZombieSurvival.Sprites;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 /**
@@ -15,11 +16,13 @@ public class Enemy extends Sprite {
     /**
      * Constructs an Enemy object with the specified attackValue and speed.
      *
+     * @param texture a Texture
      * @param attackValue an int
      * @param speed an int
      * @throws IllegalArgumentException if attackValue or speed is a negative integer
      */
-    public Enemy(final int attackValue, final int speed) {
+    public Enemy(final Texture texture, final int attackValue, final int speed) {
+        super(texture);
         if (attackValue < 0) {
             throw new IllegalArgumentException("Attack Value cannot be negative.");
         }

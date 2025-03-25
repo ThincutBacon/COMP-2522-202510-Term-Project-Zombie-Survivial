@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import io.github.ZombieSurvival.Screens.MainMenuScreen;
 
 /**
  * Base game class.
@@ -83,8 +84,10 @@ public class RotNRun extends Game {
      * Automatically sets and converts the mouses coordinates to the world units of the viewport.
      */
     public void setMousePosition() {
-        MOUSE_POSITION.set(Gdx.input.getX(), Gdx.input.getY()); // Get where the touch happened on screen
-        viewport.unproject(MOUSE_POSITION); // Convert the units to the world units of the viewport
+        // Get where the touch happened on screen
+        MOUSE_POSITION.set(Gdx.input.getX(), Gdx.input.getY());
+        // Convert the units to the world units of the viewport
+        viewport.unproject(MOUSE_POSITION);
     }
 
     /**
@@ -92,24 +95,23 @@ public class RotNRun extends Game {
      */
     @Override
     public void create() {
-        final float defaultViewportWidth = 30;
-        final float defaultViewportHeight = 22.5f;
-
         spriteBatch = new SpriteBatch();
 
         Texture fontTexture = new Texture("Custom_Font.png");
         fontTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        font = new BitmapFont(Gdx.files.internal("assets/Custom_Font.fnt"), new TextureRegion(fontTexture));
+        font = new BitmapFont(
+            Gdx.files.internal("assets/Custom_Font.fnt"),
+            new TextureRegion(fontTexture));
         viewport = new FitViewport(
             VIRTUAL_WIDTH,
             VIRTUAL_HEIGHT
         );
 
+        final float fontScale = 1.5f;
         // font has 15pt, but we need to scale it to our viewport by ratio
         // of viewport height to screen height
         font.setUseIntegerPositions(false);
-        font.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight() - 1.5f);
-        dispose();
+        font.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight() - fontScale);
         this.setScreen(new MainMenuScreen(this));
     }
 
