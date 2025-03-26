@@ -225,13 +225,72 @@ public class GameScreen implements Screen {
      * Creates a new Item and stores it in itemSprites.
      */
     private void createItem() {
-        Item itemSprite = Generate.createBandage(STAMINA_FILLING_TEXTURE);
+        Item itemSprite = chooseRandomItem();
         itemSprite.setSize(SPRITE_WIDTH, SPRITE_WIDTH);
         // Randomize spawn location
         itemSprite.setX(MathUtils.random(PLATFORM_AREA_X, PLATFORM_AREA_MAX_X));
         itemSprite.setY(MathUtils.random(PLATFORM_AREA_Y, PLATFORM_AREA_MAX_Y));
         itemSprites.add(itemSprite); // Add it to the list
         allEntities.add(itemSprite);
+    }
+
+    /*
+     * Selects and returns a random item.
+     */
+    private Item chooseRandomItem() {
+        final int chanceType = MathUtils.random(1, 100);
+        final int chanceSize = MathUtils.random(1, 10);
+        final int healthItem = 90;
+        final int staminaItem = 60;
+        if (chanceType > healthItem) { // 10% chance for healing item
+            return chooseRandomHealthItem(chanceSize);
+        } else if (chanceType > staminaItem) { // 30% chance for stamina item
+            return chooseRandomStaminaItem(chanceSize);
+        } else { // 60% chance for score item
+            return chooseRandomScoreItem(chanceSize);
+        }
+    }
+
+    /*
+     * Selects and returns a random health item.
+     */
+    private Item chooseRandomHealthItem(final int chance) {
+        final int majorHealth = 7;
+        if (chance > majorHealth) { // 30% chance for major
+            return Generate.createBandage(STAMINA_FILLING_TEXTURE);
+        } else { // 70% chance for minor
+            return Generate.createMedKit(STAMINA_FILLING_TEXTURE);
+        }
+    }
+
+    /*
+     * Selects and returns a random stamina item.
+     */
+    private Item chooseRandomStaminaItem(final int chance) {
+        final int majorStamina = 8;
+        final int mediumStamina = 4;
+        if (chance > majorStamina) { // 20% chance for major
+            return Generate.createWaterBottle(STAMINA_FILLING_TEXTURE);
+        } else if (chance > mediumStamina) { // 40% chance for medium
+            return Generate.createApple(STAMINA_FILLING_TEXTURE);
+        } else { // 40% chance for minor
+            return Generate.createSandwich(STAMINA_FILLING_TEXTURE);
+        }
+    }
+
+    /*
+     * Selects and returns a random score item.
+     */
+    private Item chooseRandomScoreItem(final int chance) {
+        final int majorScore = 8;
+        final int mediumScore = 5;
+        if (chance > majorScore) { // 20% chance for major
+            return Generate.createWaterBottle(STAMINA_FILLING_TEXTURE);
+        } else if (chance > mediumScore) { // 30% chance for medium
+            return Generate.createApple(STAMINA_FILLING_TEXTURE);
+        } else { // 50% chance for minor
+            return Generate.createSandwich(STAMINA_FILLING_TEXTURE);
+        }
     }
 
     /*
