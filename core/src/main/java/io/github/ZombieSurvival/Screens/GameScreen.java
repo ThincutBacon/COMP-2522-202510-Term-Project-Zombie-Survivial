@@ -285,11 +285,11 @@ public class GameScreen implements Screen {
         final int majorScore = 8;
         final int mediumScore = 5;
         if (chance > majorScore) { // 20% chance for major
-            return Generate.createWaterBottle(STAMINA_FILLING_TEXTURE);
+            return Generate.createNails(STAMINA_FILLING_TEXTURE);
         } else if (chance > mediumScore) { // 30% chance for medium
-            return Generate.createApple(STAMINA_FILLING_TEXTURE);
+            return Generate.createWoodenPlank(STAMINA_FILLING_TEXTURE);
         } else { // 50% chance for minor
-            return Generate.createSandwich(STAMINA_FILLING_TEXTURE);
+            return Generate.createMetalSheet(STAMINA_FILLING_TEXTURE);
         }
     }
 
