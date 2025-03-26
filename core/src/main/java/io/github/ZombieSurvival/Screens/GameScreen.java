@@ -150,36 +150,15 @@ public class GameScreen implements Screen {
         // Clears screen
         game.applyViewport();
 
-        // For brevity
-        SpriteBatch batch = game.getSpriteBatch();
-        BitmapFont font = game.getFont();
         // Increments and checks on timers
         incrementTimers();
         checkTimers();
         // Draw elements to screen
-        batch.begin();
-            drawBackground(batch);
-            drawSprites(batch);
-            drawHUDStamina(batch);
-            // drawHUDScore(batch, font);
-            drawHUDHealth(batch);
-        batch.end();
+        drawAll();
         // Check for inputs
-        // Movement
-        playerSprite.setX(MathUtils.clamp(playerSprite.getX(),
-                                            PLATFORM_AREA_X, PLATFORM_AREA_MAX_X));
-        playerSprite.setY(MathUtils.clamp(playerSprite.getY(),
-                                            PLATFORM_AREA_Y, PLATFORM_AREA_MAX_Y));
-        if (Gdx.input.isTouched()) {
-            inputMovementTouch();
-        }
-        inputMovementKeys();
+        inputAll();
         // Run logic
-        logicEnemyMovement();
-        updateEntityHitBoxCoordinates(playerHitBox, playerSprite);
-        logicEnemyAttack();
-        logicGameOver();
-        logicEndRun();
+        logicAll();
     }
 
     /*
@@ -220,7 +199,7 @@ public class GameScreen implements Screen {
             createEnemy();
             enemySpawnTimer = 0;
         }
-        final float itemSpawnTimerMax = 2.5f;
+        final float itemSpawnTimerMax = 3.5f;
         if (itemSpawnTimer >= itemSpawnTimerMax) {
             createItem();
             itemSpawnTimer = 0;
@@ -251,6 +230,23 @@ public class GameScreen implements Screen {
         itemSprite.setY(MathUtils.random(PLATFORM_AREA_Y, PLATFORM_AREA_MAX_Y));
         itemSprites.add(itemSprite); // Add it to the list
         allEntities.add(itemSprite);
+    }
+
+    /*
+     * Draws all elements onto the screen.
+     */
+    private void drawAll() {
+        // For brevity
+        SpriteBatch batch = game.getSpriteBatch();
+        BitmapFont font = game.getFont();
+        // Draw elements to screen
+        batch.begin();
+        drawBackground(batch);
+        drawSprites(batch);
+        drawHUDStamina(batch);
+        drawHUDScore(batch, font);
+        drawHUDHealth(batch);
+        batch.end();
     }
 
     /*
@@ -323,6 +319,20 @@ public class GameScreen implements Screen {
     }
 
     /*
+     * Checks for all types of input.
+     */
+    private void inputAll() {
+        playerSprite.setX(MathUtils.clamp(playerSprite.getX(),
+            PLATFORM_AREA_X, PLATFORM_AREA_MAX_X));
+        playerSprite.setY(MathUtils.clamp(playerSprite.getY(),
+            PLATFORM_AREA_Y, PLATFORM_AREA_MAX_Y));
+        if (Gdx.input.isTouched()) {
+            inputMovementTouch();
+        }
+        inputMovementKeys();
+    }
+
+    /*
      * Checks for movement inputs using touch.
      */
     private void inputMovementTouch() {
@@ -380,6 +390,17 @@ public class GameScreen implements Screen {
     }
 
     /*
+     * Runs all logic.
+     */
+    private void logicAll() {
+        logicEnemyMovement();
+        updateEntityHitBoxCoordinates(playerHitBox, playerSprite);
+        logicEnemyAttack();
+        logicGameOver();
+        logicEndRun();
+    }
+
+    /*
      * Runs enemy movement logic.
      */
     private void logicEnemyMovement() {
@@ -419,11 +440,14 @@ public class GameScreen implements Screen {
      * Run Item pickup logic.
      */
     private void logicItemPickup() {
+        int index = 0;
         for (Item item : itemSprites) {
             updateEntityHitBoxCoordinates(itemHitBox, item);
             if (itemHitBox.overlaps(playerHitBox)) {
                 item.increasePlayerStat(playerSprite);
+                itemSprites.removeIndex(index);
             }
+            index++;
         }
     }
 
