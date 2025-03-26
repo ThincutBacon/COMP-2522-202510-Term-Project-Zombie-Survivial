@@ -1,5 +1,6 @@
 package io.github.ZombieSurvival.Sprites;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 /**
@@ -9,6 +10,15 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
  * @version 2025
  */
 public abstract class Entity extends Sprite implements Comparable<Entity> {
+    /**
+     * Constructs an Entity object with the specified texture.
+     *
+     * @param texture a Texture
+     */
+    public Entity(final Texture texture) {
+        super(texture);
+    }
+
     /**
      * Compares this entity to another entity based on their Y coordinate.
      *
