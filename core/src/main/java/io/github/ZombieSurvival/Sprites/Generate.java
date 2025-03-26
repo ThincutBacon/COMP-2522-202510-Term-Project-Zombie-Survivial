@@ -47,7 +47,23 @@ public final class Generate {
     }
     // Enemies
     /**
+     * Creates a Broken Zombie Enemy.
+     * Slower speed.
+     * Hits harder.
+     *
+     * @param texture a Texture
+     * @return the created Enemy object
+     */
+    public static Enemy createBrokenZombie(final Texture texture) {
+        final int attackValue = 2;
+        final float speed = 30f;
+
+        return new Enemy(texture, attackValue, speed);
+    }
+    /**
      * Creates a Standard Zombie Enemy.
+     * Basic speed.
+     * Basic attack.
      *
      * @param texture a Texture
      * @return the created Enemy object
@@ -55,6 +71,20 @@ public final class Generate {
     public static Enemy createStandardZombie(final Texture texture) {
         final int attackValue = 1;
         final float speed = 100f;
+
+        return new Enemy(texture, attackValue, speed);
+    }
+    /**
+     * Creates a Dog Zombie Enemy.
+     * Faster speed.
+     * Basic attack.
+     *
+     * @param texture a Texture
+     * @return the created Enemy object
+     */
+    public static Enemy createDogZombie(final Texture texture) {
+        final int attackValue = 1;
+        final float speed = 200f;
 
         return new Enemy(texture, attackValue, speed);
     }
