@@ -153,6 +153,7 @@ public class GameScreen implements Screen {
         SpriteBatch batch = game.getSpriteBatch();
         BitmapFont font = game.getFont();
         // Increments and checks on timers
+        incrementTimers();
         checkTimers();
         // Draw elements to screen
         batch.begin();
@@ -181,9 +182,9 @@ public class GameScreen implements Screen {
     }
 
     /*
-     * Increments and checks on timers.
+     * Increments timers by delta.
      */
-    private void checkTimers() {
+    private void incrementTimers() {
         float delta = Gdx.graphics.getDeltaTime();
         staminaDecreaseTimer += delta;
         abilityChargeTimer += delta;
@@ -192,7 +193,12 @@ public class GameScreen implements Screen {
         }
         enemySpawnTimer += delta;
         itemSpawnTimer += delta;
+    }
 
+    /*
+     * Checks on timers.
+     */
+    private void checkTimers() {
         final float staminaDecreaseTimerMax = 1f;
         if (staminaDecreaseTimer >= staminaDecreaseTimerMax) {
             playerSprite.modifyCurrentStamina(-1);
