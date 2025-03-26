@@ -19,8 +19,6 @@ import io.github.ZombieSurvival.Sprites.Generate;
 import io.github.ZombieSurvival.Sprites.Difficulty;
 import io.github.ZombieSurvival.RotNRun;
 
-import java.util.Comparator;
-
 /**
  * The game screen of the game.
  *
@@ -31,6 +29,7 @@ public class GameScreen implements Screen {
     // Sprite
     private static final float SPRITE_WIDTH = 80f;
     private static final float SPRITE_HEIGHT = 1.5f * SPRITE_WIDTH;
+    private static final float SPRITE_HITBOX_INSET = 10f;
     // Platform
     private static final float PLATFORM_WIDTH = 9f * 150f;
     private static final float PLATFORM_HEIGHT = 7f * 150f;
@@ -51,6 +50,8 @@ public class GameScreen implements Screen {
     // Background
     private final Texture backgroundTexture;
     private final Texture platformTexture;
+    // Sprites
+    private final Array<Entity> allEntities;
     // Player
     private final Texture playerTexture;
     private final Player playerSprite;
@@ -65,9 +66,10 @@ public class GameScreen implements Screen {
     // Backend
     private final long startGameInMilliSeconds;
     private float abilityChargeTimer;
+    private boolean playerIsInvincible;
+    private float invincibilityTimer;
     private float enemySpawnTimer;
     private float itemSpawnTimer;
-    private final Array<Entity> allEntities;
 
     /**
      * Constructs a GameScreen object with the specified instance of game.
@@ -84,26 +86,33 @@ public class GameScreen implements Screen {
         // Background
         backgroundTexture = new Texture("City_Ruins.png");
         platformTexture = new Texture("Map_Platform.png");
+        // Sprites
+        allEntities = new Array<>();
         // Player
         playerTexture = new Texture("Player_Sprite_Large.png");
-        playerHitbox = new Rectangle();
         playerSprite = Generate.createPlayer(playerTexture, Difficulty.NORMAL);
         playerSprite.setSize(SPRITE_WIDTH, SPRITE_HEIGHT);
         playerSprite.setCenter((RotNRun.VIRTUAL_WIDTH / 2f), (RotNRun.VIRTUAL_HEIGHT / 2f));
+        allEntities.add(playerSprite);
+        playerHitbox = new Rectangle();
+        playerHitbox.setWidth(SPRITE_WIDTH - (SPRITE_HITBOX_INSET * 2));
+        playerHitbox.setHeight(SPRITE_HEIGHT - (SPRITE_HITBOX_INSET * 2));
         // Enemies
         standardZombieTexture = new Texture("Zombie_Sprite_Large.png");
         enemySprites = new Array<>();
         enemyHitbox = new Rectangle();
+        enemyHitbox.setWidth(SPRITE_WIDTH - (SPRITE_HITBOX_INSET * 2));
+        enemyHitbox.setHeight(SPRITE_HEIGHT - (SPRITE_HITBOX_INSET * 2));
         // Items
         itemSprites = new Array<>();
         itemHitbox = new Rectangle();
         // Backend
         abilityChargeTimer = 0;
         enemySpawnTimer = 0;
+        playerIsInvincible = false;
+        invincibilityTimer = 0;
         itemSpawnTimer = 0;
         startGameInMilliSeconds = TimeUtils.millis();
-        allEntities = new Array<>();
-        allEntities.add(playerSprite);
     }
 
     @Override
@@ -130,6 +139,7 @@ public class GameScreen implements Screen {
         batch.begin();
             drawBackground(batch);
             drawSprites(batch);
+            font.draw(batch, Integer.toString(playerSprite.getCurrentHP()), 100f, 100f);
         batch.end();
         // Check for inputs
         // Movement
@@ -141,6 +151,9 @@ public class GameScreen implements Screen {
             inputMovementTouch();
         }
         inputMovementKeys();
+        // Run logic
+        updateEntityHitboxCoordinates(playerHitbox, playerSprite);
+        logicEnemyAttack();
     }
 
     /*
@@ -149,6 +162,9 @@ public class GameScreen implements Screen {
     private void checkTimers() {
         float delta = Gdx.graphics.getDeltaTime();
         abilityChargeTimer += delta;
+        if (playerIsInvincible) {
+            invincibilityTimer += delta;
+        }
         enemySpawnTimer += delta;
         itemSpawnTimer += delta;
 
@@ -156,6 +172,11 @@ public class GameScreen implements Screen {
         if (abilityChargeTimer >= abilityChargeTimerMax) {
             playerSprite.increaseCurrentCharge();
             abilityChargeTimer = 0;
+        }
+        final float invincibilityTimerMax = 3f;
+        if (invincibilityTimer >= invincibilityTimerMax) {
+            playerIsInvincible = false;
+            invincibilityTimer = 0;
         }
         final float enemySpawnTimerMax = 5.0f;
         if (enemySpawnTimer >= enemySpawnTimerMax) {
@@ -248,6 +269,27 @@ public class GameScreen implements Screen {
             || Gdx.input.isKeyPressed(Input.Keys.W)
             || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_8)) {
             playerSprite.translateY(PLAYER_SPEED * delta);
+        }
+    }
+
+    /*
+     * Update hit box position.
+     */
+    private void updateEntityHitboxCoordinates(final Rectangle entityHitbox, final Entity entity) {
+        entityHitbox.setPosition(entity.getX() + SPRITE_HITBOX_INSET,
+                                    entity.getY() + SPRITE_HITBOX_INSET);
+    }
+
+    /*
+     * Run Enemy attack logic.
+     */
+    private void logicEnemyAttack() {
+        for (Enemy enemy : enemySprites) {
+            updateEntityHitboxCoordinates(enemyHitbox, enemy);
+            if (enemyHitbox.overlaps(playerHitbox) && !playerIsInvincible) {
+                enemy.attackPlayer(playerSprite);
+                playerIsInvincible = true;
+            }
         }
     }
 
