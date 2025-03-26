@@ -44,6 +44,11 @@ public class GameScreen implements Screen {
                                                 + PLATFORM_AREA_PADDING;
     // Player movement speed
     private static final float PLAYER_SPEED = 300f;
+    // GUI
+    private static final float TOP_GUI_WINDOW_X_PADDING = 60;
+    private static final float TOP_GUI_WINDOW_Y_PADDING = 40;
+    private static final float TOP_GUI_Y_CENTER = RotNRun.VIRTUAL_HEIGHT - 50;
+
 
     // Current running game
     private final RotNRun game;
@@ -64,6 +69,9 @@ public class GameScreen implements Screen {
     // Item
     private final Array<Item> itemSprites;
     private final Rectangle itemHitbox;
+    // HUD
+    private final Texture healthFilledTexture;
+    private final Texture healthEmptyTexture;
     // Backend
     private final long startGameInMilliSeconds;
     private float abilityChargeTimer;
@@ -108,6 +116,9 @@ public class GameScreen implements Screen {
         // Items
         itemSprites = new Array<>();
         itemHitbox = new Rectangle();
+        // HUD
+        healthFilledTexture = new Texture("Health_Filled.png");
+        healthEmptyTexture = new Texture("Health_Empty.png");
         // Backend
         abilityChargeTimer = 0;
         enemySpawnTimer = 0;
@@ -141,7 +152,7 @@ public class GameScreen implements Screen {
         batch.begin();
             drawBackground(batch);
             drawSprites(batch);
-            font.draw(batch, Integer.toString(playerSprite.getCurrentHP()), 100f, 100f);
+            drawHUDHealth(batch);
         batch.end();
         // Check for inputs
         // Movement
@@ -157,6 +168,7 @@ public class GameScreen implements Screen {
         logicEnemyMovement();
         updateEntityHitboxCoordinates(playerHitbox, playerSprite);
         logicEnemyAttack();
+        logicGameOver();
     }
 
     /*
@@ -188,7 +200,7 @@ public class GameScreen implements Screen {
         }
         final float itemSpawnTimerMax = 2.5f;
         if (itemSpawnTimer >= itemSpawnTimerMax) {
-            playerSprite.increaseCurrentCharge();
+            createItem();
             itemSpawnTimer = 0;
         }
     }
@@ -197,7 +209,6 @@ public class GameScreen implements Screen {
      * Creates a new Enemy and stores it in enemySprites.
      */
     private void createEnemy() {
-        // create the drop sprite
         Enemy enemySprite = Generate.createStandardZombie(standardZombieTexture);
         enemySprite.setSize(SPRITE_WIDTH, SPRITE_HEIGHT);
         // Randomize spawn location
@@ -205,6 +216,19 @@ public class GameScreen implements Screen {
         enemySprite.setY(MathUtils.random(PLATFORM_AREA_Y, PLATFORM_AREA_MAX_Y));
         enemySprites.add(enemySprite); // Add it to the list
         allEntities.add(enemySprite);
+    }
+
+    /*
+     * Creates a new Item and stores it in itemSprites.
+     */
+    private void createItem() {
+        Item itemSprite = Generate.createNails(playerDamagedTexture);
+        itemSprite.setSize(SPRITE_WIDTH, SPRITE_WIDTH);
+        // Randomize spawn location
+        itemSprite.setX(MathUtils.random(PLATFORM_AREA_X, PLATFORM_AREA_MAX_X));
+        itemSprite.setY(MathUtils.random(PLATFORM_AREA_Y, PLATFORM_AREA_MAX_Y));
+        itemSprites.add(itemSprite); // Add it to the list
+        allEntities.add(itemSprite);
     }
 
     /*
@@ -228,6 +252,25 @@ public class GameScreen implements Screen {
         allEntities.sort(new EntityComparator());
         for (Entity entity: allEntities) {
             entity.draw(batch);
+        }
+    }
+
+    /*
+     * Draws player health to the screen.
+     */
+    private void drawHUDHealth(final SpriteBatch batch) {
+        final float healthWidth = 11 * 10;
+        final float healthHeight = 9 * 10;
+        final float healthMargin = 20;
+        final float healthY = TOP_GUI_Y_CENTER - (healthHeight / 2) - TOP_GUI_WINDOW_Y_PADDING;
+        float healthX = RotNRun.VIRTUAL_WIDTH - healthWidth - TOP_GUI_WINDOW_X_PADDING;
+        for (int index = 0; index < playerSprite.getCurrentHP(); index++) {
+            batch.draw(healthFilledTexture, healthX, healthY, healthWidth, healthHeight);
+            healthX -= healthWidth + healthMargin;
+        }
+        for (int index = 0; index < (playerSprite.getMaxHP() - playerSprite.getCurrentHP()); index++) {
+            batch.draw(healthEmptyTexture, healthX, healthY, healthWidth, healthHeight);
+            healthX -= healthWidth + healthMargin;
         }
     }
 
@@ -321,6 +364,16 @@ public class GameScreen implements Screen {
                 enemy.attackPlayer(playerSprite);
                 playerIsInvincible = true;
             }
+        }
+    }
+
+    /*
+     * Run game over logic.
+     */
+    private void logicGameOver() {
+        if (playerSprite.getCurrentHP() <= 0) {
+            game.setScreen(new MainMenuScreen(game));
+            dispose();
         }
     }
 
