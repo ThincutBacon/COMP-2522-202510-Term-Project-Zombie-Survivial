@@ -10,12 +10,16 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
+import io.github.ZombieSurvival.Sprites.Entity;
+import io.github.ZombieSurvival.Sprites.EntityComparator;
 import io.github.ZombieSurvival.Sprites.Player;
 import io.github.ZombieSurvival.Sprites.Enemy;
 import io.github.ZombieSurvival.Sprites.Item;
 import io.github.ZombieSurvival.Sprites.Generate;
 import io.github.ZombieSurvival.Sprites.Difficulty;
 import io.github.ZombieSurvival.RotNRun;
+
+import java.util.Comparator;
 
 /**
  * The game screen of the game.
@@ -63,8 +67,18 @@ public class GameScreen implements Screen {
     private float abilityChargeTimer;
     private float enemySpawnTimer;
     private float itemSpawnTimer;
+    private final Array<Entity> allEntities;
 
+    /**
+     * Constructs a GameScreen object with the specified instance of game.
+     *
+     * @param game a RotNRun
+     * @throws IllegalArgumentException if game is null
+     */
     public GameScreen(final RotNRun game) {
+        if (game == null) {
+            throw new IllegalArgumentException("There is no game to the apply screen to.");
+        }
         this.game = game;
         // Load textures
         // Background
@@ -88,6 +102,8 @@ public class GameScreen implements Screen {
         enemySpawnTimer = 0;
         itemSpawnTimer = 0;
         startGameInMilliSeconds = TimeUtils.millis();
+        allEntities = new Array<>();
+        allEntities.add(playerSprite);
     }
 
     @Override
@@ -95,6 +111,11 @@ public class GameScreen implements Screen {
 
     }
 
+    /**
+     * Renders this GameScreen.
+     *
+     * @param delta a float
+     */
     @Override
     public void render(final float delta) {
         // Clears screen
@@ -106,7 +127,10 @@ public class GameScreen implements Screen {
         // Increments and checks on timers
         checkTimers();
         // Draw elements to screen
-        draw(batch, font);
+        batch.begin();
+            drawBackground(batch);
+            drawSprites(batch);
+        batch.end();
         // Check for inputs
         // Movement
         playerSprite.setX(MathUtils.clamp(playerSprite.getX(),
@@ -119,6 +143,9 @@ public class GameScreen implements Screen {
         inputMovementKeys();
     }
 
+    /*
+     * Increments and checks on timers.
+     */
     private void checkTimers() {
         float delta = Gdx.graphics.getDeltaTime();
         abilityChargeTimer += delta;
@@ -142,6 +169,9 @@ public class GameScreen implements Screen {
         }
     }
 
+    /*
+     * Creates a new Enemy and stores it in enemySprites.
+     */
     private void createEnemy() {
         // create the drop sprite
         Enemy enemySprite = Generate.createStandardZombie(standardZombieTexture);
@@ -150,24 +180,31 @@ public class GameScreen implements Screen {
         enemySprite.setX(MathUtils.random(PLATFORM_AREA_X, PLATFORM_AREA_MAX_X));
         enemySprite.setY(MathUtils.random(PLATFORM_AREA_Y, PLATFORM_AREA_MAX_Y));
         enemySprites.add(enemySprite); // Add it to the list
+        allEntities.add(enemySprite);
     }
 
-    private void draw(final SpriteBatch batch, final BitmapFont font) {
-        // Draws elements to screen
-        batch.begin();
-            batch.draw(backgroundTexture, 0, 0, RotNRun.VIRTUAL_WIDTH, RotNRun.VIRTUAL_HEIGHT);
-            batch.draw(platformTexture, RotNRun.VIRTUAL_WIDTH / 2f - PLATFORM_WIDTH / 2f,
-                0, PLATFORM_WIDTH, PLATFORM_HEIGHT);
-            for (Item item : itemSprites) {
-                item.draw(batch);
-            }
-            for (Enemy enemy : enemySprites) {
-                enemy.draw(batch);
-            }
-            playerSprite.draw(batch);
-        batch.end();
+    /*
+     * Draws background textures to the screen.
+     */
+    private void drawBackground(final SpriteBatch batch) {
+        batch.draw(backgroundTexture, 0, 0, RotNRun.VIRTUAL_WIDTH, RotNRun.VIRTUAL_HEIGHT);
+        batch.draw(platformTexture, RotNRun.VIRTUAL_WIDTH / 2f - PLATFORM_WIDTH / 2f,
+            0, PLATFORM_WIDTH, PLATFORM_HEIGHT);
     }
 
+    /*
+     * Draws sprites to the screen.
+     */
+    private void drawSprites(final SpriteBatch batch) {
+        allEntities.sort(new EntityComparator());
+        for (Entity entity: allEntities) {
+            entity.draw(batch);
+        }
+    }
+
+    /*
+     * Checks for movement inputs using touch.
+     */
     private void inputMovementTouch() {
         float delta = Gdx.graphics.getDeltaTime();
         game.setMousePosition();
@@ -186,6 +223,9 @@ public class GameScreen implements Screen {
         }
     }
 
+    /*
+     * Checks for movement inputs using the keyboard.
+     */
     private void inputMovementKeys() {
         float delta = Gdx.graphics.getDeltaTime();
         game.setMousePosition();
@@ -211,6 +251,12 @@ public class GameScreen implements Screen {
         }
     }
 
+    /**
+     * Updates viewport by width and height when window is resized.
+     *
+     * @param width an int
+     * @param height an int
+     */
     @Override
     public void resize(final int width, final int height) {
         game.updateViewport(width, height);
