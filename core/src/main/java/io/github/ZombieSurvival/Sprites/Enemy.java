@@ -1,7 +1,6 @@
 package io.github.ZombieSurvival.Sprites;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 
 /**
  * An interactable enemy entity.
@@ -9,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
  * @author Kanon Nishiyama
  * @version 2025
  */
-public class Enemy extends Sprite {
+public class Enemy extends Entity {
     private final int attackValue;
     private final float speed;
 

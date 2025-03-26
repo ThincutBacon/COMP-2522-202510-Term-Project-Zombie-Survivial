@@ -1,6 +1,5 @@
 package io.github.ZombieSurvival.Sprites;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.Texture;
 
 /**
@@ -9,7 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
  * @author Kanon Nishiyama
  * @version 2025
  */
-public class Player extends Sprite {
+public class Player extends Entity {
     private final int maxHP;
     private final int maxStamina;
     private final int maxCharge;
@@ -30,7 +29,8 @@ public class Player extends Sprite {
      * @throws IllegalArgumentException if maxStamina is smaller or equal to 0
      * @throws IllegalArgumentException if maxCharge is smaller or equal to 0
      */
-    public Player(final Texture texture, final int maxHP, final int maxStamina, final int maxCharge) {
+    public Player(final Texture texture,
+                  final int maxHP, final int maxStamina, final int maxCharge) {
         // Sprite
         super(texture);
         // Set HP max value

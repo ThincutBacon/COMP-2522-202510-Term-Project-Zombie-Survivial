@@ -1,7 +1,6 @@
 package io.github.ZombieSurvival.Sprites;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 
 /**
  * An interactable item entity.
@@ -9,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
  * @author Kanon Nishiyama
  * @version 2025
  */
-public class Item extends Sprite {
+public class Item extends Entity {
     private final ItemType itemType;
     private final int increaseValue;
 
