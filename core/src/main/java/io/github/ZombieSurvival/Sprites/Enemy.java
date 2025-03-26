@@ -37,7 +37,7 @@ public class Enemy extends Entity {
      *
      * @return type as String
      */
-    float getSpeed() {
+    public float getSpeed() {
         return speed;
     }
     /**
@@ -45,7 +45,7 @@ public class Enemy extends Entity {
      *
      * @param player a Player
      */
-    void modifyPlayerStat(final Player player) {
+    public void attackPlayer(final Player player) {
         player.modifyCurrentHP(-attackValue);
     }
 
