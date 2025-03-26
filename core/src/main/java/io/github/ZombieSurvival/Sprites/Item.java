@@ -39,7 +39,7 @@ public class Item extends Entity {
      * @param player a Player
      * @throws IllegalArgumentException if itemType is not an expected ItemType option
      */
-    void increasePlayerStat(final Player player) {
+    public void increasePlayerStat(final Player player) {
         switch (itemType) {
             case HP:
                 player.modifyCurrentHP(increaseValue);
