@@ -125,6 +125,8 @@ public class GameScreen implements Screen {
         // Items
         itemSprites = new Array<>();
         itemHitBox = new Rectangle();
+        enemyHitBox.setWidth(SPRITE_WIDTH - (SPRITE_HIT_BOX_INSET * 2));
+        enemyHitBox.setHeight(SPRITE_WIDTH - (SPRITE_HIT_BOX_INSET * 2));
         // Backend
         staminaDecreaseTimer = 0;
         abilityChargeTimer = 0;
@@ -223,7 +225,7 @@ public class GameScreen implements Screen {
      * Creates a new Item and stores it in itemSprites.
      */
     private void createItem() {
-        Item itemSprite = Generate.createNails(PLAYER_DAMAGED_TEXTURE);
+        Item itemSprite = Generate.createBandage(STAMINA_FILLING_TEXTURE);
         itemSprite.setSize(SPRITE_WIDTH, SPRITE_WIDTH);
         // Randomize spawn location
         itemSprite.setX(MathUtils.random(PLATFORM_AREA_X, PLATFORM_AREA_MAX_X));
@@ -396,6 +398,7 @@ public class GameScreen implements Screen {
         logicEnemyMovement();
         updateEntityHitBoxCoordinates(playerHitBox, playerSprite);
         logicEnemyAttack();
+        logicItemPickup();
         logicGameOver();
         logicEndRun();
     }
@@ -440,14 +443,13 @@ public class GameScreen implements Screen {
      * Run Item pickup logic.
      */
     private void logicItemPickup() {
-        int index = 0;
         for (Item item : itemSprites) {
             updateEntityHitBoxCoordinates(itemHitBox, item);
             if (itemHitBox.overlaps(playerHitBox)) {
                 item.increasePlayerStat(playerSprite);
-                itemSprites.removeIndex(index);
+                itemSprites.removeValue(item, true);
+                allEntities.removeValue(item, true);
             }
-            index++;
         }
     }
 
