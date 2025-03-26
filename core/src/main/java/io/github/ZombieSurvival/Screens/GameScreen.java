@@ -47,7 +47,7 @@ public class GameScreen implements Screen {
     // GUI
     private static final float TOP_GUI_WINDOW_X_PADDING = 60;
     private static final float TOP_GUI_WINDOW_Y_PADDING = 40;
-    private static final float TOP_GUI_Y_CENTER = RotNRun.VIRTUAL_HEIGHT - 50;
+    private static final float TOP_GUI_Y_CENTER = RotNRun.VIRTUAL_HEIGHT - 50 - TOP_GUI_WINDOW_Y_PADDING;
 
 
     // Current running game
@@ -72,8 +72,11 @@ public class GameScreen implements Screen {
     // HUD
     private final Texture healthFilledTexture;
     private final Texture healthEmptyTexture;
+    private final Texture staminaContainerTexture;
+    private final Texture staminaFillingTexture;
     // Backend
     private final long startGameInMilliSeconds;
+    private float staminaDecreaseTimer;
     private float abilityChargeTimer;
     private boolean playerIsInvincible;
     private float invincibilityTimer;
@@ -119,7 +122,10 @@ public class GameScreen implements Screen {
         // HUD
         healthFilledTexture = new Texture("Health_Filled.png");
         healthEmptyTexture = new Texture("Health_Empty.png");
+        staminaContainerTexture  = new Texture("Stamina_Bar_Container.png");
+        staminaFillingTexture  = new Texture("Stamina_Bar_Filling.png");
         // Backend
+        staminaDecreaseTimer = 0;
         abilityChargeTimer = 0;
         enemySpawnTimer = 0;
         playerIsInvincible = false;
@@ -152,6 +158,8 @@ public class GameScreen implements Screen {
         batch.begin();
             drawBackground(batch);
             drawSprites(batch);
+            drawHUDStamina(batch);
+            // drawHUDScore(batch, font);
             drawHUDHealth(batch);
         batch.end();
         // Check for inputs
@@ -176,6 +184,7 @@ public class GameScreen implements Screen {
      */
     private void checkTimers() {
         float delta = Gdx.graphics.getDeltaTime();
+        staminaDecreaseTimer += delta;
         abilityChargeTimer += delta;
         if (playerIsInvincible) {
             invincibilityTimer += delta;
@@ -183,6 +192,11 @@ public class GameScreen implements Screen {
         enemySpawnTimer += delta;
         itemSpawnTimer += delta;
 
+        final float staminaDecreaseTimerMax = 1f;
+        if (staminaDecreaseTimer >= staminaDecreaseTimerMax) {
+            playerSprite.modifyCurrentStamina(-1);
+            staminaDecreaseTimer = 0;
+        }
         final float abilityChargeTimerMax = 1f;
         if (abilityChargeTimer >= abilityChargeTimerMax) {
             playerSprite.increaseCurrentCharge();
@@ -262,7 +276,7 @@ public class GameScreen implements Screen {
         final float healthWidth = 11 * 10;
         final float healthHeight = 9 * 10;
         final float healthMargin = 20;
-        final float healthY = TOP_GUI_Y_CENTER - (healthHeight / 2) - TOP_GUI_WINDOW_Y_PADDING;
+        final float healthY = TOP_GUI_Y_CENTER - (healthHeight / 2);
         float healthX = RotNRun.VIRTUAL_WIDTH - healthWidth - TOP_GUI_WINDOW_X_PADDING;
         for (int index = 0; index < playerSprite.getCurrentHP(); index++) {
             batch.draw(healthFilledTexture, healthX, healthY, healthWidth, healthHeight);
@@ -272,6 +286,29 @@ public class GameScreen implements Screen {
             batch.draw(healthEmptyTexture, healthX, healthY, healthWidth, healthHeight);
             healthX -= healthWidth + healthMargin;
         }
+    }
+
+    /*
+     * Draws player stamina to the screen.
+     */
+    private void drawHUDStamina(final SpriteBatch batch) {
+        final float staminaWidth = 9 * 90;
+        final float staminaHeight = 9 * 9;
+        final float staminaY = TOP_GUI_Y_CENTER - (staminaHeight / 2);
+        final float staminaPercentage = (float) playerSprite.getCurrentStamina() / playerSprite.getMaxStamina();
+        batch.draw(staminaFillingTexture, TOP_GUI_WINDOW_X_PADDING, staminaY,
+            (staminaWidth *  staminaPercentage), staminaHeight);
+        batch.draw(staminaContainerTexture, TOP_GUI_WINDOW_X_PADDING, staminaY,
+            staminaWidth, staminaHeight);
+    }
+
+    /*
+     * Draws player score to the screen.
+     */
+    private void drawHUDScore(final SpriteBatch batch, final BitmapFont font) {
+        String scoreDisplay = String.format("%03d", playerSprite.getCurrentScore());
+        font.draw(batch, scoreDisplay,
+            TOP_GUI_WINDOW_X_PADDING, RotNRun.VIRTUAL_HEIGHT - TOP_GUI_WINDOW_Y_PADDING);
     }
 
     /*
