@@ -177,6 +177,7 @@ public class GameScreen implements Screen {
         updateEntityHitBoxCoordinates(playerHitBox, playerSprite);
         logicEnemyAttack();
         logicGameOver();
+        logicEndRun();
     }
 
     /*
@@ -401,6 +402,17 @@ public class GameScreen implements Screen {
                 enemy.attackPlayer(playerSprite);
                 playerIsInvincible = true;
             }
+        }
+    }
+
+    /*
+     * Run end run logic.
+     */
+    private void logicEndRun() {
+        if (playerSprite.getCurrentStamina() <= 0) {
+            long timeElapsed = TimeUtils.timeSinceMillis(startGameInMilliSeconds);
+            game.setScreen(new MainMenuScreen(game));
+            dispose();
         }
     }
 
