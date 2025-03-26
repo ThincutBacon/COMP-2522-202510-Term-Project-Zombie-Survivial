@@ -26,6 +26,7 @@ import io.github.ZombieSurvival.RotNRun;
  * @version 2025
  */
 public class GameScreen implements Screen {
+    // Constants
     // Sprite
     private static final float SPRITE_WIDTH = 80f;
     private static final float SPRITE_HEIGHT = 1.5f * SPRITE_WIDTH;
@@ -47,33 +48,45 @@ public class GameScreen implements Screen {
     // GUI
     private static final float TOP_GUI_WINDOW_X_PADDING = 60;
     private static final float TOP_GUI_WINDOW_Y_PADDING = 40;
-    private static final float TOP_GUI_Y_CENTER = RotNRun.VIRTUAL_HEIGHT - 50 - TOP_GUI_WINDOW_Y_PADDING;
-
-
+    private static final float TOP_GUI_Y_CENTER = RotNRun.VIRTUAL_HEIGHT - 50
+                                                - TOP_GUI_WINDOW_Y_PADDING;
+    // Textures
+    // Background
+    private static final Texture BACKGROUND_TEXTURE =
+        new Texture("City_Ruins.png");
+    private static final Texture PLATFORM_TEXTURE =
+        new Texture("Map_Platform.png");
+    // Player
+    private static final Texture PLAYER_TEXTURE =
+        new Texture("Player_Sprite_Large.png");
+    private static final Texture PLAYER_DAMAGED_TEXTURE =
+        new Texture("Player_Sprite_Large_Damaged.png");
+    // Enemy
+    private static final Texture STANDARD_ZOMBIE_TEXTURE =
+        new Texture("Zombie_Sprite_Large.png");
+    // HUD
+    private static final Texture HEALTH_FILLED_TEXTURE =
+        new Texture("Health_Filled.png");
+    private static final Texture HEALTH_EMPTY_TEXTURE =
+        new Texture("Health_Empty.png");
+    private static final Texture STAMINA_CONTAINER_TEXTURE =
+        new Texture("Stamina_Bar_Container.png");
+    private static final Texture STAMINA_FILLING_TEXTURE =
+        new Texture("Stamina_Bar_Filling.png");
+    // Instance Variables
     // Current running game
     private final RotNRun game;
-    // Background
-    private final Texture backgroundTexture;
-    private final Texture platformTexture;
     // Sprites
     private final Array<Entity> allEntities;
     // Player
-    private final Texture playerTexture;
-    private final Texture playerDamagedTexture;
     private final Player playerSprite;
     private final Rectangle playerHitBox;
     // Enemy
-    private final Texture standardZombieTexture;
     private final Array<Enemy> enemySprites;
     private final Rectangle enemyHitBox;
     // Item
     private final Array<Item> itemSprites;
     private final Rectangle itemHitBox;
-    // HUD
-    private final Texture healthFilledTexture;
-    private final Texture healthEmptyTexture;
-    private final Texture staminaContainerTexture;
-    private final Texture staminaFillingTexture;
     // Backend
     private final long startGameInMilliSeconds;
     private float staminaDecreaseTimer;
@@ -94,16 +107,10 @@ public class GameScreen implements Screen {
             throw new IllegalArgumentException("There is no game to the apply screen to.");
         }
         this.game = game;
-        // Load textures
-        // Background
-        backgroundTexture = new Texture("City_Ruins.png");
-        platformTexture = new Texture("Map_Platform.png");
         // Sprites
         allEntities = new Array<>();
         // Player
-        playerTexture = new Texture("Player_Sprite_Large.png");
-        playerDamagedTexture = new Texture("Player_Sprite_Large_Damaged.png");
-        playerSprite = Generate.createPlayer(playerTexture, Difficulty.NORMAL);
+        playerSprite = Generate.createPlayer(PLAYER_TEXTURE, Difficulty.NORMAL);
         playerSprite.setSize(SPRITE_WIDTH, SPRITE_HEIGHT);
         playerSprite.setCenter((RotNRun.VIRTUAL_WIDTH / 2f), (RotNRun.VIRTUAL_HEIGHT / 2f));
         allEntities.add(playerSprite);
@@ -111,7 +118,6 @@ public class GameScreen implements Screen {
         playerHitBox.setWidth(SPRITE_WIDTH - (SPRITE_HIT_BOX_INSET * 2));
         playerHitBox.setHeight(SPRITE_HEIGHT - (SPRITE_HIT_BOX_INSET * 2));
         // Enemies
-        standardZombieTexture = new Texture("Zombie_Sprite_Large.png");
         enemySprites = new Array<>();
         enemyHitBox = new Rectangle();
         enemyHitBox.setWidth(SPRITE_WIDTH - (SPRITE_HIT_BOX_INSET * 2));
@@ -119,11 +125,6 @@ public class GameScreen implements Screen {
         // Items
         itemSprites = new Array<>();
         itemHitBox = new Rectangle();
-        // HUD
-        healthFilledTexture = new Texture("Health_Filled.png");
-        healthEmptyTexture = new Texture("Health_Empty.png");
-        staminaContainerTexture  = new Texture("Stamina_Bar_Container.png");
-        staminaFillingTexture  = new Texture("Stamina_Bar_Filling.png");
         // Backend
         staminaDecreaseTimer = 0;
         abilityChargeTimer = 0;
@@ -230,7 +231,7 @@ public class GameScreen implements Screen {
      * Creates a new Enemy and stores it in enemySprites.
      */
     private void createEnemy() {
-        Enemy enemySprite = Generate.createStandardZombie(standardZombieTexture);
+        Enemy enemySprite = Generate.createStandardZombie(STANDARD_ZOMBIE_TEXTURE);
         enemySprite.setSize(SPRITE_WIDTH, SPRITE_HEIGHT);
         // Randomize spawn location
         enemySprite.setX(MathUtils.random(PLATFORM_AREA_X, PLATFORM_AREA_MAX_X));
@@ -243,7 +244,7 @@ public class GameScreen implements Screen {
      * Creates a new Item and stores it in itemSprites.
      */
     private void createItem() {
-        Item itemSprite = Generate.createNails(playerDamagedTexture);
+        Item itemSprite = Generate.createNails(PLAYER_DAMAGED_TEXTURE);
         itemSprite.setSize(SPRITE_WIDTH, SPRITE_WIDTH);
         // Randomize spawn location
         itemSprite.setX(MathUtils.random(PLATFORM_AREA_X, PLATFORM_AREA_MAX_X));
@@ -256,8 +257,8 @@ public class GameScreen implements Screen {
      * Draws background textures to the screen.
      */
     private void drawBackground(final SpriteBatch batch) {
-        batch.draw(backgroundTexture, 0, 0, RotNRun.VIRTUAL_WIDTH, RotNRun.VIRTUAL_HEIGHT);
-        batch.draw(platformTexture, RotNRun.VIRTUAL_WIDTH / 2f - PLATFORM_WIDTH / 2f,
+        batch.draw(BACKGROUND_TEXTURE, 0, 0, RotNRun.VIRTUAL_WIDTH, RotNRun.VIRTUAL_HEIGHT);
+        batch.draw(PLATFORM_TEXTURE, RotNRun.VIRTUAL_WIDTH / 2f - PLATFORM_WIDTH / 2f,
             0, PLATFORM_WIDTH, PLATFORM_HEIGHT);
     }
 
@@ -266,9 +267,9 @@ public class GameScreen implements Screen {
      */
     private void drawSprites(final SpriteBatch batch) {
         if (playerIsInvincible) {
-            playerSprite.setTexture(playerDamagedTexture);
+            playerSprite.setTexture(PLAYER_DAMAGED_TEXTURE);
         } else {
-            playerSprite.setTexture(playerTexture);
+            playerSprite.setTexture(PLAYER_TEXTURE);
         }
         allEntities.sort(new EntityComparator());
         for (Entity entity: allEntities) {
@@ -285,12 +286,14 @@ public class GameScreen implements Screen {
         final float healthMargin = 20;
         final float healthY = TOP_GUI_Y_CENTER - (healthHeight / 2);
         float healthX = RotNRun.VIRTUAL_WIDTH - healthWidth - TOP_GUI_WINDOW_X_PADDING;
-        for (int index = 0; index < playerSprite.getCurrentHP(); index++) {
-            batch.draw(healthFilledTexture, healthX, healthY, healthWidth, healthHeight);
+        for (int index = 0;
+             index < playerSprite.getCurrentHP(); index++) {
+            batch.draw(HEALTH_FILLED_TEXTURE, healthX, healthY, healthWidth, healthHeight);
             healthX -= healthWidth + healthMargin;
         }
-        for (int index = 0; index < (playerSprite.getMaxHP() - playerSprite.getCurrentHP()); index++) {
-            batch.draw(healthEmptyTexture, healthX, healthY, healthWidth, healthHeight);
+        for (int index = 0;
+             index < (playerSprite.getMaxHP() - playerSprite.getCurrentHP()); index++) {
+            batch.draw(HEALTH_EMPTY_TEXTURE, healthX, healthY, healthWidth, healthHeight);
             healthX -= healthWidth + healthMargin;
         }
     }
@@ -302,10 +305,11 @@ public class GameScreen implements Screen {
         final float staminaWidth = 9 * 90;
         final float staminaHeight = 9 * 9;
         final float staminaY = TOP_GUI_Y_CENTER - (staminaHeight / 2);
-        final float staminaPercentage = (float) playerSprite.getCurrentStamina() / playerSprite.getMaxStamina();
-        batch.draw(staminaFillingTexture, TOP_GUI_WINDOW_X_PADDING, staminaY,
+        final float staminaPercentage =
+            (float) playerSprite.getCurrentStamina() / playerSprite.getMaxStamina();
+        batch.draw(STAMINA_FILLING_TEXTURE, TOP_GUI_WINDOW_X_PADDING, staminaY,
             (staminaWidth *  staminaPercentage), staminaHeight);
-        batch.draw(staminaContainerTexture, TOP_GUI_WINDOW_X_PADDING, staminaY,
+        batch.draw(STAMINA_CONTAINER_TEXTURE, TOP_GUI_WINDOW_X_PADDING, staminaY,
             staminaWidth, staminaHeight);
     }
 
@@ -407,6 +411,18 @@ public class GameScreen implements Screen {
             if (enemyHitBox.overlaps(playerHitBox) && !playerIsInvincible) {
                 enemy.attackPlayer(playerSprite);
                 playerIsInvincible = true;
+            }
+        }
+    }
+
+    /*
+     * Run Item pickup logic.
+     */
+    private void logicItemPickup() {
+        for (Item item : itemSprites) {
+            updateEntityHitBoxCoordinates(itemHitBox, item);
+            if (itemHitBox.overlaps(playerHitBox)) {
+                item.increasePlayerStat(playerSprite);
             }
         }
     }
