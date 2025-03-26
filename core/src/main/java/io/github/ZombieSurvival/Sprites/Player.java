@@ -80,7 +80,14 @@ public class Player extends Entity {
      * @param amount an int
      */
     public void modifyCurrentHP(final int amount) {
-        currentHP += amount;
+        int recoverableHP = maxHP - currentHP;
+        if (amount > recoverableHP) {
+            currentHP = maxHP;
+        } else if (amount < 0 && Math.abs(amount) > currentHP) {
+            currentHP = 0;
+        } else {
+            currentHP += amount;
+        }
     }
     // Stamina related methods
     /**
@@ -105,7 +112,14 @@ public class Player extends Entity {
      * @param amount an int
      */
     public void modifyCurrentStamina(final int amount) {
-        currentStamina += amount;
+        int recoverableStamina = maxStamina - currentStamina;
+        if (amount > recoverableStamina) {
+            currentStamina = maxStamina;
+        } else if (amount < 0 && Math.abs(amount) > maxStamina) {
+            currentStamina = 0;
+        } else {
+            currentStamina += amount;
+        }
     }
     // Ability related methods
     /**
@@ -123,7 +137,7 @@ public class Player extends Entity {
     public void increaseCurrentCharge() {
         if (currentCharge < maxCharge) {
             currentCharge++;
-        } else {
+        } else if (!isCharged) {
             isCharged = true;
         }
     }
