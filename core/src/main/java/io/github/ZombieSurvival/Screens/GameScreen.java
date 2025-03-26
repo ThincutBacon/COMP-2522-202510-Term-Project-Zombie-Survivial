@@ -212,7 +212,7 @@ public class GameScreen implements Screen {
      * Creates a new Enemy and stores it in enemySprites.
      */
     private void createEnemy() {
-        Enemy enemySprite = Generate.createStandardZombie(STANDARD_ZOMBIE_TEXTURE);
+        Enemy enemySprite = chooseRandomEnemy();
         enemySprite.setSize(SPRITE_WIDTH, SPRITE_HEIGHT);
         // Randomize spawn location
         enemySprite.setX(MathUtils.random(PLATFORM_AREA_X, PLATFORM_AREA_MAX_X));
@@ -233,6 +233,23 @@ public class GameScreen implements Screen {
         itemSprites.add(itemSprite); // Add it to the list
         allEntities.add(itemSprite);
     }
+
+    /*
+     * Selects and returns a random enemy.
+     */
+    private Enemy chooseRandomEnemy() {
+        final int chance = MathUtils.random(1, 50);
+        final int slowZombie = 38;
+        final int fastZombie = 32;
+        if (chance > slowZombie) { // 24% chance for healing item
+            return Generate.createBrokenZombie(STANDARD_ZOMBIE_TEXTURE);
+        } else if (chance > fastZombie) { // 12% chance for stamina item
+            return Generate.createDogZombie(STANDARD_ZOMBIE_TEXTURE);
+        } else { // 64% chance for score item
+            return Generate.createStandardZombie(STANDARD_ZOMBIE_TEXTURE);
+        }
+    }
+
 
     /*
      * Selects and returns a random item.
