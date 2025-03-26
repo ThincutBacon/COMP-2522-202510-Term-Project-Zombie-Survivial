@@ -29,7 +29,7 @@ public class GameScreen implements Screen {
     // Sprite
     private static final float SPRITE_WIDTH = 80f;
     private static final float SPRITE_HEIGHT = 1.5f * SPRITE_WIDTH;
-    private static final float SPRITE_HITBOX_INSET = 10f;
+    private static final float SPRITE_HIT_BOX_INSET = 10f;
     // Platform
     private static final float PLATFORM_WIDTH = 9f * 150f;
     private static final float PLATFORM_HEIGHT = 7f * 150f;
@@ -61,14 +61,14 @@ public class GameScreen implements Screen {
     private final Texture playerTexture;
     private final Texture playerDamagedTexture;
     private final Player playerSprite;
-    private final Rectangle playerHitbox;
+    private final Rectangle playerHitBox;
     // Enemy
     private final Texture standardZombieTexture;
     private final Array<Enemy> enemySprites;
-    private final Rectangle enemyHitbox;
+    private final Rectangle enemyHitBox;
     // Item
     private final Array<Item> itemSprites;
-    private final Rectangle itemHitbox;
+    private final Rectangle itemHitBox;
     // HUD
     private final Texture healthFilledTexture;
     private final Texture healthEmptyTexture;
@@ -107,18 +107,18 @@ public class GameScreen implements Screen {
         playerSprite.setSize(SPRITE_WIDTH, SPRITE_HEIGHT);
         playerSprite.setCenter((RotNRun.VIRTUAL_WIDTH / 2f), (RotNRun.VIRTUAL_HEIGHT / 2f));
         allEntities.add(playerSprite);
-        playerHitbox = new Rectangle();
-        playerHitbox.setWidth(SPRITE_WIDTH - (SPRITE_HITBOX_INSET * 2));
-        playerHitbox.setHeight(SPRITE_HEIGHT - (SPRITE_HITBOX_INSET * 2));
+        playerHitBox = new Rectangle();
+        playerHitBox.setWidth(SPRITE_WIDTH - (SPRITE_HIT_BOX_INSET * 2));
+        playerHitBox.setHeight(SPRITE_HEIGHT - (SPRITE_HIT_BOX_INSET * 2));
         // Enemies
         standardZombieTexture = new Texture("Zombie_Sprite_Large.png");
         enemySprites = new Array<>();
-        enemyHitbox = new Rectangle();
-        enemyHitbox.setWidth(SPRITE_WIDTH - (SPRITE_HITBOX_INSET * 2));
-        enemyHitbox.setHeight(SPRITE_HEIGHT - (SPRITE_HITBOX_INSET * 2));
+        enemyHitBox = new Rectangle();
+        enemyHitBox.setWidth(SPRITE_WIDTH - (SPRITE_HIT_BOX_INSET * 2));
+        enemyHitBox.setHeight(SPRITE_HEIGHT - (SPRITE_HIT_BOX_INSET * 2));
         // Items
         itemSprites = new Array<>();
-        itemHitbox = new Rectangle();
+        itemHitBox = new Rectangle();
         // HUD
         healthFilledTexture = new Texture("Health_Filled.png");
         healthEmptyTexture = new Texture("Health_Empty.png");
@@ -174,7 +174,7 @@ public class GameScreen implements Screen {
         inputMovementKeys();
         // Run logic
         logicEnemyMovement();
-        updateEntityHitboxCoordinates(playerHitbox, playerSprite);
+        updateEntityHitBoxCoordinates(playerHitBox, playerSprite);
         logicEnemyAttack();
         logicGameOver();
     }
@@ -363,9 +363,9 @@ public class GameScreen implements Screen {
     /*
      * Update hit box position.
      */
-    private void updateEntityHitboxCoordinates(final Rectangle entityHitbox, final Entity entity) {
-        entityHitbox.setPosition(entity.getX() + SPRITE_HITBOX_INSET,
-                                    entity.getY() + SPRITE_HITBOX_INSET);
+    private void updateEntityHitBoxCoordinates(final Rectangle entityHitBox, final Entity entity) {
+        entityHitBox.setPosition(entity.getX() + SPRITE_HIT_BOX_INSET,
+                                    entity.getY() + SPRITE_HIT_BOX_INSET);
     }
 
     /*
@@ -375,17 +375,17 @@ public class GameScreen implements Screen {
         float delta = Gdx.graphics.getDeltaTime();
         for (Enemy enemy : enemySprites) {
             float speed = enemy.getSpeed();
-            if (enemy.getX() + SPRITE_HITBOX_INSET > playerSprite.getX()) {
+            if (enemy.getX() + SPRITE_HIT_BOX_INSET > playerSprite.getX()) {
                 enemy.translateX(-speed * delta);
             }
-            if (enemy.getX() - SPRITE_HITBOX_INSET < playerSprite.getX()) {
+            if (enemy.getX() - SPRITE_HIT_BOX_INSET < playerSprite.getX()) {
                 enemy.translateX(speed * delta);
             }
 
-            if (enemy.getY() + SPRITE_HITBOX_INSET > playerSprite.getY()) {
+            if (enemy.getY() + SPRITE_HIT_BOX_INSET > playerSprite.getY()) {
                 enemy.translateY(-speed * delta);
             }
-            if (enemy.getY() - SPRITE_HITBOX_INSET < playerSprite.getY()) {
+            if (enemy.getY() - SPRITE_HIT_BOX_INSET < playerSprite.getY()) {
                 enemy.translateY(speed * delta);
             }
         }
@@ -396,8 +396,8 @@ public class GameScreen implements Screen {
      */
     private void logicEnemyAttack() {
         for (Enemy enemy : enemySprites) {
-            updateEntityHitboxCoordinates(enemyHitbox, enemy);
-            if (enemyHitbox.overlaps(playerHitbox) && !playerIsInvincible) {
+            updateEntityHitBoxCoordinates(enemyHitBox, enemy);
+            if (enemyHitBox.overlaps(playerHitBox) && !playerIsInvincible) {
                 enemy.attackPlayer(playerSprite);
                 playerIsInvincible = true;
             }
