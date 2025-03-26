@@ -54,6 +54,7 @@ public class GameScreen implements Screen {
     private final Array<Entity> allEntities;
     // Player
     private final Texture playerTexture;
+    private final Texture playerDamagedTexture;
     private final Player playerSprite;
     private final Rectangle playerHitbox;
     // Enemy
@@ -90,6 +91,7 @@ public class GameScreen implements Screen {
         allEntities = new Array<>();
         // Player
         playerTexture = new Texture("Player_Sprite_Large.png");
+        playerDamagedTexture = new Texture("Player_Sprite_Large_Damaged.png");
         playerSprite = Generate.createPlayer(playerTexture, Difficulty.NORMAL);
         playerSprite.setSize(SPRITE_WIDTH, SPRITE_HEIGHT);
         playerSprite.setCenter((RotNRun.VIRTUAL_WIDTH / 2f), (RotNRun.VIRTUAL_HEIGHT / 2f));
@@ -152,6 +154,7 @@ public class GameScreen implements Screen {
         }
         inputMovementKeys();
         // Run logic
+        logicEnemyMovement();
         updateEntityHitboxCoordinates(playerHitbox, playerSprite);
         logicEnemyAttack();
     }
@@ -217,6 +220,11 @@ public class GameScreen implements Screen {
      * Draws sprites to the screen.
      */
     private void drawSprites(final SpriteBatch batch) {
+        if (playerIsInvincible) {
+            playerSprite.setTexture(playerDamagedTexture);
+        } else {
+            playerSprite.setTexture(playerTexture);
+        }
         allEntities.sort(new EntityComparator());
         for (Entity entity: allEntities) {
             entity.draw(batch);
@@ -278,6 +286,29 @@ public class GameScreen implements Screen {
     private void updateEntityHitboxCoordinates(final Rectangle entityHitbox, final Entity entity) {
         entityHitbox.setPosition(entity.getX() + SPRITE_HITBOX_INSET,
                                     entity.getY() + SPRITE_HITBOX_INSET);
+    }
+
+    /*
+     * Runs enemy movement logic.
+     */
+    private void logicEnemyMovement() {
+        float delta = Gdx.graphics.getDeltaTime();
+        for (Enemy enemy : enemySprites) {
+            float speed = enemy.getSpeed();
+            if (enemy.getX() + SPRITE_HITBOX_INSET > playerSprite.getX()) {
+                enemy.translateX(-speed * delta);
+            }
+            if (enemy.getX() - SPRITE_HITBOX_INSET < playerSprite.getX()) {
+                enemy.translateX(speed * delta);
+            }
+
+            if (enemy.getY() + SPRITE_HITBOX_INSET > playerSprite.getY()) {
+                enemy.translateY(-speed * delta);
+            }
+            if (enemy.getY() - SPRITE_HITBOX_INSET < playerSprite.getY()) {
+                enemy.translateY(speed * delta);
+            }
+        }
     }
 
     /*

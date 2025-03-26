@@ -54,7 +54,7 @@ public final class Generate {
      */
     public static Enemy createStandardZombie(final Texture texture) {
         final int attackValue = 1;
-        final float speed = 5f;
+        final float speed = 100f;
 
         return new Enemy(texture, attackValue, speed);
     }
