@@ -23,16 +23,16 @@ public final class Generate {
     public static Player createPlayer(final Texture texture, final Difficulty difficulty) {
         // Easy
         final int easyHP = 5;
-        final int easyStamina = 100;
-        final int easyCharge = 50;
+        final int easyStamina = 200;
+        final int easyCharge = 20;
         // Normal
         final int normalHP = 3;
-        final int normalStamina = 100;
-        final int normalCharge = 100;
+        final int normalStamina = 150;
+        final int normalCharge = 50;
         // Hard
         final int hardHP = 3;
-        final int hardStamina = 50;
-        final int hardCharge = 150;
+        final int hardStamina = 100;
+        final int hardCharge = 100;
         // Create Player
         switch (difficulty) {
             case EASY:
