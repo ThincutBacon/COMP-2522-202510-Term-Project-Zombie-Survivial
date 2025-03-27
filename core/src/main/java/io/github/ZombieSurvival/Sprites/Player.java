@@ -123,6 +123,14 @@ public class Player extends Entity {
     }
     // Ability related methods
     /**
+     * Returns the maxCharge of this Player's ability.
+     *
+     * @return maxCharge as int
+     */
+    public int getMaxCharge() {
+        return maxCharge;
+    }
+    /**
      * Returns the currentCharge of this Player's ability.
      *
      * @return currentCharge as int
@@ -195,7 +203,7 @@ public class Player extends Entity {
 
         return getMaxHP() == player.getMaxHP()
             && getMaxStamina() == player.getMaxStamina()
-            && this.maxCharge == player.maxCharge
+            && getMaxCharge() == player.getMaxCharge()
             && getCurrentHP() == player.getCurrentHP()
             && getCurrentStamina() == player.getCurrentStamina()
             && getCurrentCharge() == player.getCurrentCharge()
@@ -215,7 +223,7 @@ public class Player extends Entity {
 
         result = getMaxHP();
         result = usefulPrime * result + getMaxStamina();
-        result = usefulPrime * result + maxCharge;
+        result = usefulPrime * result + getMaxCharge();
         result = usefulPrime * result + getCurrentHP();
         result = usefulPrime * result + getCurrentStamina();
         result = usefulPrime * result + getCurrentCharge();
@@ -239,7 +247,7 @@ public class Player extends Entity {
         builder = new StringBuilder("Player{");
         builder.append("maxHP=").append(getMaxHP()).append(", ");
         builder.append("maxStamina=").append(getMaxStamina()).append(", ");
-        builder.append("maxCharge=").append(maxCharge).append(", ");
+        builder.append("maxCharge=").append(getMaxCharge()).append(", ");
         builder.append("currentHP=").append(getCurrentStamina()).append(", ");
         builder.append("currentStamina=").append(getMaxStamina()).append(", ");
         builder.append("currentCharge=").append(getCurrentCharge()).append(", ");
