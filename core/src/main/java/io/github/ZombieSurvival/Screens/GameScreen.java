@@ -186,7 +186,7 @@ public class GameScreen implements Screen {
             playerSprite.modifyCurrentStamina(-1);
             staminaDecreaseTimer = 0;
         }
-        final float abilityChargeTimerMax = 1f;
+        final float abilityChargeTimerMax = 0.5f;
         if (abilityChargeTimer >= abilityChargeTimerMax) {
             playerSprite.increaseCurrentCharge();
             abilityChargeTimer = 0;
@@ -324,6 +324,7 @@ public class GameScreen implements Screen {
         drawHUDStamina(batch);
         drawHUDScore(batch, font);
         drawHUDHealth(batch);
+        drawHUDAbility(batch);
         batch.end();
     }
 
@@ -393,8 +394,25 @@ public class GameScreen implements Screen {
     private void drawHUDScore(final SpriteBatch batch, final BitmapFont font) {
         String scoreDisplay = String.format("%03d", playerSprite.getCurrentScore());
         font.draw(batch, scoreDisplay,
-            TOP_GUI_WINDOW_X_PADDING, RotNRun.VIRTUAL_HEIGHT - TOP_GUI_WINDOW_Y_PADDING);
+            TOP_GUI_WINDOW_X_PADDING, RotNRun.VIRTUAL_HEIGHT - TOP_GUI_WINDOW_Y_PADDING - STAMINA_CONTAINER_TEXTURE.getHeight() * 2);
     }
+
+    /*
+     * Draws player ability charge to the screen.
+     */
+    private void drawHUDAbility(final SpriteBatch batch) {
+        final float staminaWidth = 9 * 120;
+        final float staminaHeight = 9 * 9;
+        final float staminaY = TOP_GUI_WINDOW_Y_PADDING;
+        final float staminaX =  RotNRun.VIRTUAL_WIDTH / 2 - staminaWidth / 2;
+        final float staminaPercentage =
+            (float) playerSprite.getCurrentCharge() / playerSprite.getMaxCharge();
+        batch.draw(STAMINA_FILLING_TEXTURE, staminaX, staminaY,
+            (staminaWidth *  staminaPercentage), staminaHeight);
+        batch.draw(STAMINA_CONTAINER_TEXTURE, staminaX, staminaY,
+            staminaWidth, staminaHeight);
+    }
+
 
     /*
      * Checks for all types of input.
@@ -418,9 +436,15 @@ public class GameScreen implements Screen {
         game.setMousePosition();
         if (playerSprite.getX() > RotNRun.MOUSE_POSITION.x) {
             playerSprite.translateX(-PLAYER_SPEED * delta);
+            if (playerSprite.isFlipX()) {
+                playerSprite.flip(true, false);
+            }
         }
         if (playerSprite.getX() < RotNRun.MOUSE_POSITION.x) {
             playerSprite.translateX(PLAYER_SPEED * delta);
+            if (!playerSprite.isFlipX()) {
+                playerSprite.flip(true, false);
+            }
         }
 
         if (playerSprite.getY() > RotNRun.MOUSE_POSITION.y) {
@@ -441,11 +465,17 @@ public class GameScreen implements Screen {
             || Gdx.input.isKeyPressed(Input.Keys.D)
             || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_6)) {
             playerSprite.translateX(PLAYER_SPEED * delta);
+            if (!playerSprite.isFlipX()) {
+                playerSprite.flip(true, false);
+            }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)
             || Gdx.input.isKeyPressed(Input.Keys.A)
             || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_4)) {
             playerSprite.translateX(-PLAYER_SPEED * delta);
+            if (playerSprite.isFlipX()) {
+                playerSprite.flip(true, false);
+            }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)
             || Gdx.input.isKeyPressed(Input.Keys.S)
@@ -472,8 +502,9 @@ public class GameScreen implements Screen {
      */
     private void logicAll() {
         logicEnemyMovement();
-        updateEntityHitBoxCoordinates(playerHitBox, playerSprite);
-        logicEnemyAttack();
+        if (!playerIsInvincible) {
+            logicEnemyAttack();
+        }
         logicItemPickup();
         logicGameOver();
         logicEndRun();
@@ -488,9 +519,15 @@ public class GameScreen implements Screen {
             float speed = enemy.getSpeed();
             if (enemy.getX() + SPRITE_HIT_BOX_INSET > playerSprite.getX()) {
                 enemy.translateX(-speed * delta);
+                if (enemy.isFlipX()) {
+                    enemy.flip(true, false);
+                }
             }
             if (enemy.getX() - SPRITE_HIT_BOX_INSET < playerSprite.getX()) {
                 enemy.translateX(speed * delta);
+                if (!enemy.isFlipX()) {
+                    enemy.flip(true, false);
+                }
             }
 
             if (enemy.getY() + SPRITE_HIT_BOX_INSET > playerSprite.getY()) {
@@ -506,9 +543,10 @@ public class GameScreen implements Screen {
      * Run Enemy attack logic.
      */
     private void logicEnemyAttack() {
+        updateEntityHitBoxCoordinates(playerHitBox, playerSprite);
         for (Enemy enemy : enemySprites) {
             updateEntityHitBoxCoordinates(enemyHitBox, enemy);
-            if (enemyHitBox.overlaps(playerHitBox) && !playerIsInvincible) {
+            if (enemyHitBox.overlaps(playerHitBox)) {
                 enemy.attackPlayer(playerSprite);
                 playerIsInvincible = true;
             }
@@ -520,6 +558,7 @@ public class GameScreen implements Screen {
      */
     private void logicItemPickup() {
         for (Item item : itemSprites) {
+            updateEntityHitBoxCoordinates(playerHitBox, playerSprite);
             updateEntityHitBoxCoordinates(itemHitBox, item);
             if (itemHitBox.overlaps(playerHitBox)) {
                 item.increasePlayerStat(playerSprite);
