@@ -109,9 +109,10 @@ public class GameScreen implements Screen {
      * Constructs a GameScreen object with the specified instance of game.
      *
      * @param game a RotNRun
+     * @param difficulty a Difficulty
      * @throws IllegalArgumentException if game is null
      */
-    public GameScreen(final RotNRun game) {
+    public GameScreen(final RotNRun game, final Difficulty difficulty) {
         if (game == null) {
             throw new IllegalArgumentException("There is no game to the apply screen to.");
         }
@@ -119,7 +120,7 @@ public class GameScreen implements Screen {
         // Sprites
         allEntities = new Array<>();
         // Player
-        playerSprite = Generate.createPlayer(PLAYER_TEXTURE, Difficulty.EASY);
+        playerSprite = Generate.createPlayer(PLAYER_TEXTURE, difficulty);
         playerSprite.setSize(SPRITE_WIDTH, SPRITE_HEIGHT);
         playerSprite.setCenter((RotNRun.VIRTUAL_WIDTH / 2f), (RotNRun.VIRTUAL_HEIGHT / 2f));
         allEntities.add(playerSprite);
