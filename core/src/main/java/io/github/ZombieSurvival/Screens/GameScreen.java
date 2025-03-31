@@ -6,6 +6,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
@@ -45,6 +47,8 @@ public class GameScreen implements Screen {
                                                 + PLATFORM_AREA_PADDING;
     // Player movement speed
     private static final float PLAYER_SPEED = 300f;
+    // Player ability radius
+    private static final float ABILITY_RADIUS = 150f;
     // GUI
     private static final float TOP_GUI_WINDOW_X_PADDING = 60;
     private static final float TOP_GUI_WINDOW_Y_PADDING = 40;
@@ -61,6 +65,8 @@ public class GameScreen implements Screen {
         new Texture("Player_Sprite_Large.png");
     private static final Texture PLAYER_DAMAGED_TEXTURE =
         new Texture("Player_Sprite_Large_Damaged.png");
+    private static final Texture ABILITY_TEXTURE =
+        new Texture("Ability_Circle.png");
     // Enemy
     private static final Texture STANDARD_ZOMBIE_TEXTURE =
         new Texture("Zombie_Sprite_Large.png");
@@ -81,6 +87,7 @@ public class GameScreen implements Screen {
     // Player
     private final Player playerSprite;
     private final Rectangle playerHitBox;
+    private final Circle playerAbility;
     // Enemy
     private final Array<Enemy> enemySprites;
     private final Rectangle enemyHitBox;
@@ -91,6 +98,8 @@ public class GameScreen implements Screen {
     private final long startGameInMilliSeconds;
     private float staminaDecreaseTimer;
     private float abilityChargeTimer;
+    private boolean abilityActivated;
+    private float abilityCooldownTimer;
     private boolean playerIsInvincible;
     private float invincibilityTimer;
     private float enemySpawnTimer;
@@ -110,13 +119,15 @@ public class GameScreen implements Screen {
         // Sprites
         allEntities = new Array<>();
         // Player
-        playerSprite = Generate.createPlayer(PLAYER_TEXTURE, Difficulty.NORMAL);
+        playerSprite = Generate.createPlayer(PLAYER_TEXTURE, Difficulty.EASY);
         playerSprite.setSize(SPRITE_WIDTH, SPRITE_HEIGHT);
         playerSprite.setCenter((RotNRun.VIRTUAL_WIDTH / 2f), (RotNRun.VIRTUAL_HEIGHT / 2f));
         allEntities.add(playerSprite);
         playerHitBox = new Rectangle();
         playerHitBox.setWidth(SPRITE_WIDTH - (SPRITE_HIT_BOX_INSET * 2));
         playerHitBox.setHeight(SPRITE_HEIGHT - (SPRITE_HIT_BOX_INSET * 2));
+        playerAbility = new Circle();
+        playerAbility.setRadius(ABILITY_RADIUS);
         // Enemies
         enemySprites = new Array<>();
         enemyHitBox = new Rectangle();
@@ -128,13 +139,15 @@ public class GameScreen implements Screen {
         enemyHitBox.setWidth(SPRITE_WIDTH - (SPRITE_HIT_BOX_INSET * 2));
         enemyHitBox.setHeight(SPRITE_WIDTH - (SPRITE_HIT_BOX_INSET * 2));
         // Backend
+        startGameInMilliSeconds = TimeUtils.millis();
         staminaDecreaseTimer = 0;
         abilityChargeTimer = 0;
-        enemySpawnTimer = 0;
+        abilityActivated = false;
+        abilityCooldownTimer = 0;
         playerIsInvincible = false;
         invincibilityTimer = 0;
+        enemySpawnTimer = 0;
         itemSpawnTimer = 0;
-        startGameInMilliSeconds = TimeUtils.millis();
     }
 
     @Override
@@ -154,7 +167,8 @@ public class GameScreen implements Screen {
 
         // Increments and checks on timers
         incrementTimers();
-        checkTimers();
+        checkPlayerTimers();
+        checkSpawnTimers();
         // Draw elements to screen
         drawAll();
         // Check for inputs
@@ -169,7 +183,12 @@ public class GameScreen implements Screen {
     private void incrementTimers() {
         float delta = Gdx.graphics.getDeltaTime();
         staminaDecreaseTimer += delta;
-        abilityChargeTimer += delta;
+        if (!abilityActivated) {
+            abilityChargeTimer += delta;
+        }
+        if (abilityActivated) {
+            abilityCooldownTimer += delta;
+        }
         if (playerIsInvincible) {
             invincibilityTimer += delta;
         }
@@ -178,9 +197,9 @@ public class GameScreen implements Screen {
     }
 
     /*
-     * Checks on timers.
+     * Checks on player related timers.
      */
-    private void checkTimers() {
+    private void checkPlayerTimers() {
         final float staminaDecreaseTimerMax = 1f;
         if (staminaDecreaseTimer >= staminaDecreaseTimerMax) {
             playerSprite.modifyCurrentStamina(-1);
@@ -191,11 +210,22 @@ public class GameScreen implements Screen {
             playerSprite.increaseCurrentCharge();
             abilityChargeTimer = 0;
         }
+        final float abilityCooldownTimerMax = 1.5f;
+        if (abilityCooldownTimer >= abilityCooldownTimerMax) {
+            abilityActivated = false;
+            abilityCooldownTimer = 0;
+        }
         final float invincibilityTimerMax = 3f;
         if (invincibilityTimer >= invincibilityTimerMax) {
             playerIsInvincible = false;
             invincibilityTimer = 0;
         }
+    }
+
+    /*
+     * Checks on entity spawn timers.
+     */
+    private void checkSpawnTimers() {
         final float enemySpawnTimerMax = 5.0f;
         if (enemySpawnTimer >= enemySpawnTimerMax) {
             createEnemy();
@@ -341,6 +371,12 @@ public class GameScreen implements Screen {
      * Draws sprites to the screen.
      */
     private void drawSprites(final SpriteBatch batch) {
+        if (abilityActivated) {
+            batch.draw(ABILITY_TEXTURE,
+                playerSprite.getX() + (SPRITE_WIDTH / 2) - ABILITY_RADIUS,
+                playerSprite.getY() + (SPRITE_HEIGHT / 2) - ABILITY_RADIUS,
+                ABILITY_RADIUS * 2, ABILITY_RADIUS * 2);
+        }
         if (playerIsInvincible) {
             playerSprite.setTexture(PLAYER_DAMAGED_TEXTURE);
         } else {
@@ -487,6 +523,10 @@ public class GameScreen implements Screen {
             || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_8)) {
             playerSprite.translateY(PLAYER_SPEED * delta);
         }
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && playerSprite.getIsCharged()) {
+            playerSprite.useAbility();
+            abilityActivated = true;
+        }
     }
 
     /*
@@ -502,9 +542,7 @@ public class GameScreen implements Screen {
      */
     private void logicAll() {
         logicEnemyMovement();
-        if (!playerIsInvincible) {
-            logicEnemyAttack();
-        }
+        logicEnemyHitBox();
         logicItemPickup();
         logicGameOver();
         logicEndRun();
@@ -540,13 +578,20 @@ public class GameScreen implements Screen {
     }
 
     /*
-     * Run Enemy attack logic.
+     * Runs logic that are affected by the enemy hit box.
      */
-    private void logicEnemyAttack() {
-        updateEntityHitBoxCoordinates(playerHitBox, playerSprite);
+    private void logicEnemyHitBox() {
         for (Enemy enemy : enemySprites) {
             updateEntityHitBoxCoordinates(enemyHitBox, enemy);
-            if (enemyHitBox.overlaps(playerHitBox)) {
+            if (abilityActivated) {
+                playerAbility.setPosition(playerSprite.getX() + (SPRITE_WIDTH / 2),
+                    playerSprite.getY() + (SPRITE_HEIGHT / 2));
+                if (Intersector.overlaps(playerAbility, enemyHitBox)) {
+                    enemySprites.removeValue(enemy, true);
+                    allEntities.removeValue(enemy, true);
+                }
+            }
+            if (enemyHitBox.overlaps(playerHitBox) && !playerIsInvincible) {
                 enemy.attackPlayer(playerSprite);
                 playerIsInvincible = true;
             }
