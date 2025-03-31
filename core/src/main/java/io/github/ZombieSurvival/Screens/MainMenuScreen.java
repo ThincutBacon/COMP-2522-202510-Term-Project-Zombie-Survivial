@@ -28,8 +28,14 @@ public class MainMenuScreen implements Screen {
     private final float difficultyWidth = 290f;
     private final float difficultyHeight = 100f;
     private final float difficultyPadding = difficultyWidth + 15f;
-    private final float difficultyX = (RotNRun.VIRTUAL_WIDTH / 2f) - (startWidth / 2f);
     private final float difficultyY = 500f;
+    private final float difficultyMaxY = difficultyY + difficultyHeight;
+    private final float difficultyEasyX = (RotNRun.VIRTUAL_WIDTH / 2f) - (startWidth / 2f);
+    private final float difficultyEasyMaxX = difficultyEasyX + difficultyWidth;
+    private final float difficultyNormalX = difficultyEasyX + difficultyPadding;
+    private final float difficultyNormalMaxX = difficultyNormalX + difficultyWidth;
+    private final float difficultyHardX = difficultyNormalX + difficultyPadding;
+    private final float difficultyHardMaxX = difficultyHardX + difficultyWidth;
     // Exit Button Values
     private final float exitLength = 150f;
     private final float exitXY = 100f;
@@ -92,6 +98,7 @@ public class MainMenuScreen implements Screen {
         // Draw elements to screen
         batch.begin();
             drawTitle(batch);
+            drawDifficultyButtons(batch);
             drawButtons(batch);
         batch.end();
         // Check for input
@@ -116,40 +123,6 @@ public class MainMenuScreen implements Screen {
     private void drawButtons(final SpriteBatch batch) {
         // Display button logic
         game.setMousePosition();
-        // Difficulty Buttons
-        // EASY
-        if (game.checkMouseOnButton(difficultyX, difficultyX + difficultyWidth,
-            difficultyY, difficultyY + difficultyHeight)) {
-            batch.draw(easyButtonActive, difficultyX, difficultyY,
-                difficultyWidth, difficultyHeight);
-        } else {
-            batch.draw(easyButtonInactive, startX, startY,
-                difficultyWidth, difficultyHeight);
-        }
-        // NORMAL
-        if (game.checkMouseOnButton(difficultyX + difficultyPadding,
-            difficultyX + difficultyWidth + difficultyPadding,
-            difficultyY, difficultyY + difficultyHeight)) {
-            batch.draw(normalButtonActive,
-                difficultyX + difficultyPadding, difficultyY,
-                difficultyWidth, difficultyHeight);
-        } else {
-            batch.draw(normalButtonInactive,
-                startX + difficultyPadding, difficultyY,
-                difficultyWidth, difficultyHeight);
-        }
-        // HARD
-        if (game.checkMouseOnButton(difficultyX + difficultyPadding * 2,
-            difficultyX + difficultyWidth + difficultyPadding * 2,
-            difficultyY, difficultyY + difficultyHeight)) {
-            batch.draw(hardButtonActive,
-                difficultyX + difficultyPadding * 2, difficultyY,
-                difficultyWidth, difficultyHeight);
-        } else {
-            batch.draw(hardButtonInactive,
-                startX + difficultyPadding * 2, startY,
-                difficultyWidth, difficultyHeight);
-        }
 //        // Start Button
 //        if (game.checkMouseOnButton(startX, startMaxX, startY, startMaxY)) {
 //            batch.draw(startButtonActive, startX, startY, startWidth, startHeight);
@@ -174,6 +147,40 @@ public class MainMenuScreen implements Screen {
     }
 
     /*
+     * Draws the difficulty button textures to screen.
+     */
+    private void drawDifficultyButtons(final SpriteBatch batch) {
+        game.setMousePosition();
+        // EASY
+        if (game.checkMouseOnButton(difficultyEasyX, difficultyEasyMaxX,
+            difficultyY, difficultyMaxY)) {
+            batch.draw(easyButtonActive, difficultyEasyX, difficultyY,
+                difficultyWidth, difficultyHeight);
+        } else {
+            batch.draw(easyButtonInactive, difficultyEasyX, difficultyY,
+                difficultyWidth, difficultyHeight);
+        }
+        // NORMAL
+        if (game.checkMouseOnButton(difficultyNormalX, difficultyNormalMaxX,
+            difficultyY, difficultyMaxY)) {
+            batch.draw(normalButtonActive, difficultyNormalX, difficultyY,
+                difficultyWidth, difficultyHeight);
+        } else {
+            batch.draw(normalButtonInactive, difficultyNormalX, difficultyY,
+                difficultyWidth, difficultyHeight);
+        }
+        // HARD
+        if (game.checkMouseOnButton(difficultyHardX, difficultyHardMaxX,
+            difficultyY, difficultyMaxY)) {
+            batch.draw(hardButtonActive, difficultyHardX, difficultyY,
+                difficultyWidth, difficultyHeight);
+        } else {
+            batch.draw(hardButtonInactive, difficultyHardX, difficultyY,
+                difficultyWidth, difficultyHeight);
+        }
+    }
+
+    /*
      * Checks for user input.
      */
     private void input() {
@@ -181,22 +188,20 @@ public class MainMenuScreen implements Screen {
         if (Gdx.input.isTouched()) {
             game.setMousePosition();
             // Game select EASY
-            if (game.checkMouseOnButton(difficultyX, difficultyX + difficultyWidth,
-                difficultyY, difficultyY + difficultyHeight)) {
+            if (game.checkMouseOnButton(difficultyEasyX, difficultyEasyMaxX,
+                difficultyY, difficultyMaxY)) {
                 game.setScreen(new GameScreen(game, Difficulty.EASY));
                 dispose();
             }
             // Game select NORMAL
-            if (game.checkMouseOnButton(difficultyX + difficultyPadding,
-                difficultyX + difficultyWidth + difficultyPadding,
-                difficultyY, difficultyY + difficultyHeight)) {
+            if (game.checkMouseOnButton(difficultyNormalX, difficultyNormalMaxX,
+                difficultyY, difficultyMaxY)) {
                 game.setScreen(new GameScreen(game, Difficulty.NORMAL));
                 dispose();
             }
             // Game select HARD
-            if (game.checkMouseOnButton(difficultyX + difficultyPadding * 2,
-                difficultyX + difficultyWidth + difficultyPadding * 2,
-                difficultyY, difficultyY + difficultyHeight)) {
+            if (game.checkMouseOnButton(difficultyHardX, difficultyHardMaxX,
+                difficultyY, difficultyMaxY)) {
                 game.setScreen(new GameScreen(game, Difficulty.HARD));
                 dispose();
             }
