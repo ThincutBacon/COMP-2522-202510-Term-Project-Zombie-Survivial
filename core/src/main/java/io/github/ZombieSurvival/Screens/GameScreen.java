@@ -620,7 +620,7 @@ public class GameScreen implements Screen {
     private void logicEndRun() {
         if (playerSprite.getCurrentStamina() <= 0) {
             long timeElapsed = TimeUtils.timeSinceMillis(startGameInMilliSeconds);
-            game.setScreen(new MainMenuScreen(game));
+            game.setScreen(new ResultScreen(game));
             dispose();
         }
     }
@@ -630,7 +630,7 @@ public class GameScreen implements Screen {
      */
     private void logicGameOver() {
         if (playerSprite.getCurrentHP() <= 0) {
-            game.setScreen(new MainMenuScreen(game));
+            game.setScreen(new GameOverScreen(game));
             dispose();
         }
     }
