@@ -2,6 +2,7 @@ package io.github.ZombieSurvival;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -42,8 +43,10 @@ public class RotNRun extends Game {
         "core/src/main/java/io/github/ZombieSurvival/Save.txt");
 
     private SpriteBatch spriteBatch;
-    private BitmapFont font;
     private FitViewport viewport;
+    private BitmapFont normalText;
+    private BitmapFont bigText;
+    private BitmapFont yellowText;
 
     /**
      * Returns the spriteBatch for this game.
@@ -54,12 +57,28 @@ public class RotNRun extends Game {
         return spriteBatch;
     }
     /**
-     * Returns the font used for this game.
+     * Returns the normal text font used for this game.
      *
-     * @return font as BitmapFont
+     * @return normalText as BitmapFont
      */
-    public BitmapFont getFont() {
-        return font;
+    public BitmapFont getNormalText() {
+        return normalText;
+    }
+    /**
+     * Returns the bit text font used for this game.
+     *
+     * @return bigText as BitmapFont
+     */
+    public BitmapFont getBigText() {
+        return bigText;
+    }
+    /**
+     * Returns the yellow special text font used for this game.
+     *
+     * @return yellowText as BitmapFont
+     */
+    public BitmapFont getYellowText() {
+        return yellowText;
     }
     /**
      * Applies viewport.
@@ -108,44 +127,76 @@ public class RotNRun extends Game {
             && (RotNRun.MOUSE_POSITION.y >= minY
             && RotNRun.MOUSE_POSITION.y <= maxY);
     }
-
-    /**
-     * Initializes game variables.
+    /*
+     * Creates a new save file if one does not already exist.
      */
-    @Override
-    public void create() {
-        spriteBatch = new SpriteBatch();
-
-        Texture fontTexture = new Texture("Custom_Font.png");
-        fontTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        font = new BitmapFont(
-            Gdx.files.internal("assets/Custom_Font.fnt"),
-            new TextureRegion(fontTexture));
-        viewport = new FitViewport(
-            VIRTUAL_WIDTH,
-            VIRTUAL_HEIGHT
-        );
-
-        final float fontScale = 1.5f;
-        // font has 15pt, but we need to scale it to our viewport by ratio
-        // of viewport height to screen height
-        font.setUseIntegerPositions(false);
-        font.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight() - fontScale);
-
+    private void createSaveFile() {
         if (!Files.exists(SAVE_FILE_PATH)) {
             try {
                 Files.createFile(SAVE_FILE_PATH);
                 System.out.println("New save file created.");
                 List<String> scores = List.of(
                     "0",
+                    "true",
                     "0",
-                    "0"
+                    "false",
+                    "0",
+                    "false",
+                    "false",
+                    "false"
                 );
                 Files.write(SAVE_FILE_PATH, scores);
             } catch (IOException error) {
                 System.out.println("New save file failed to be created.");
             }
         }
+    }
+    /*
+     * Sets up the font by the given configurations.
+     */
+    private void setFontConfig(final BitmapFont font, final float scale, final Color color) {
+        font.setUseIntegerPositions(false);
+        font.getData().setScale(
+            viewport.getWorldHeight() / Gdx.graphics.getHeight() - scale);
+        font.setColor(color);
+    }
+    /**
+     * Initializes game variables.
+     */
+    @Override
+    public void create() {
+        // Create save file if it doesn't exist
+        createSaveFile();
+        // Create new sprite batch
+        spriteBatch = new SpriteBatch();
+        // Create fonts
+        // Custom font texture
+        Texture fontTexture = new Texture("Custom_Font.png");
+        fontTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        // Create new viewport
+        viewport = new FitViewport(
+            VIRTUAL_WIDTH,
+            VIRTUAL_HEIGHT
+        );
+        // Normal Text
+        final float normalTextScale = 1.5f;
+        normalText = new BitmapFont(
+            Gdx.files.internal("assets/Custom_Font.fnt"),
+            new TextureRegion(fontTexture));
+        setFontConfig(normalText, normalTextScale, Color.WHITE);
+        // Big Text
+        final float bigTextScale = 0.5f;
+        bigText = new BitmapFont(
+            Gdx.files.internal("assets/Custom_Font.fnt"),
+            new TextureRegion(fontTexture));
+        setFontConfig(bigText, bigTextScale, Color.WHITE);
+        // Yellow Text
+        final float yellowTextScale = 2.5f;
+        yellowText = new BitmapFont(
+            Gdx.files.internal("assets/Custom_Font.fnt"),
+            new TextureRegion(fontTexture));
+        setFontConfig(yellowText, yellowTextScale, Color.YELLOW);
+        // Start game on MainMenuScreen
         this.setScreen(new MainMenuScreen(this));
     }
 
@@ -161,7 +212,9 @@ public class RotNRun extends Game {
      */
     public void dispose() {
         spriteBatch.dispose();
-        font.dispose();
+        normalText.dispose();
+        bigText.dispose();
+        yellowText.dispose();
     }
 
 }
