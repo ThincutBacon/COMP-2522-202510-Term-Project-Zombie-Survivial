@@ -184,15 +184,12 @@ public class ResultScreen implements Screen {
         final float newY = scoreY - (glyphLayout.height * 3.5f);
         switch (difficulty) {
             case EASY:
-                easyHighScore = score;
                 easyNewHighScore = true;
                 break;
             case NORMAL:
-                normalHighScore = score;
                 normalNewHighScore = true;
                 break;
             case HARD:
-                hardHighScore = score;
                 hardNewHighScore = true;
                 break;
             default:
@@ -237,16 +234,7 @@ public class ResultScreen implements Screen {
      * Writes current values into the save file.
      */
     private void writeToSave() {
-        if (!normalUnlocked) {
-            if (easyHighScore >= DIFFICULTY_UNLOCK_VALUE) {
-                normalUnlocked = true;
-            }
-        }
-        if (!hardUnlocked) {
-            if (normalHighScore >= DIFFICULTY_UNLOCK_VALUE) {
-                hardUnlocked = true;
-            }
-        }
+        setNewValues();
         try {
             List<String> scores = List.of(
                 Integer.toString(easyHighScore),
@@ -261,6 +249,38 @@ public class ResultScreen implements Screen {
             Files.write(RotNRun.SAVE_FILE_PATH, scores);
         } catch (IOException error) {
             System.out.println("Failed to write to save file.");
+        }
+    }
+
+    /*
+     * Sets any new values.
+     */
+    private void setNewValues() {
+        if (score > getMatchingHighScore()) {
+            switch (difficulty) {
+                case EASY:
+                    easyHighScore = score;
+                    break;
+                case NORMAL:
+                    normalHighScore = score;
+                    break;
+                case HARD:
+                    hardHighScore = score;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (!normalUnlocked) {
+            if (easyHighScore >= DIFFICULTY_UNLOCK_VALUE) {
+                normalUnlocked = true;
+            }
+        }
+        if (!hardUnlocked) {
+            if (normalHighScore >= DIFFICULTY_UNLOCK_VALUE) {
+                hardUnlocked = true;
+            }
         }
     }
 
