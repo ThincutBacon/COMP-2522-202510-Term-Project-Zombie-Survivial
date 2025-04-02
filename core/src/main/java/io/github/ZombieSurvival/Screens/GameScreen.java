@@ -35,7 +35,7 @@ public class GameScreen implements Screen {
     private static final float SPRITE_HIT_BOX_INSET = 10f;
     // Item Sprite
     private static final float ITEM_SPRITE_LENGTH = 80f;
-    private static final float ITEM_SPRITE_HIT_BOX_INSET = 5f;
+    private static final float ITEM_SPRITE_HIT_BOX_INSET = 0f;
     // Platform
     private static final float PLATFORM_WIDTH = 9f * 150f;
     private static final float PLATFORM_HEIGHT = 7f * 150f;
@@ -73,6 +73,13 @@ public class GameScreen implements Screen {
     // Enemy
     private static final Texture STANDARD_ZOMBIE_TEXTURE =
         new Texture("Zombie_Sprite_Large.png");
+    // Items
+    private static final Texture ITEM_HEALTH_TEXTURE =
+        new Texture("Item_Health.png");
+    private static final Texture ITEM_STAMINA_TEXTURE =
+        new Texture("Item_Stamina.png");
+    private static final Texture ITEM_SCORE_TEXTURE =
+        new Texture("Item_Score.png");
     // HUD
     private static final Texture HEALTH_FILLED_TEXTURE =
         new Texture("Health_Filled.png");
@@ -308,9 +315,9 @@ public class GameScreen implements Screen {
     private Item chooseRandomHealthItem(final int chance) {
         final int majorHealth = 7;
         if (chance > majorHealth) { // 30% chance for major
-            return Generate.createBandage(STAMINA_FILLING_TEXTURE);
+            return Generate.createBandage(ITEM_HEALTH_TEXTURE);
         } else { // 70% chance for minor
-            return Generate.createMedKit(STAMINA_FILLING_TEXTURE);
+            return Generate.createMedKit(ITEM_HEALTH_TEXTURE);
         }
     }
 
@@ -321,11 +328,11 @@ public class GameScreen implements Screen {
         final int majorStamina = 8;
         final int mediumStamina = 4;
         if (chance > majorStamina) { // 20% chance for major
-            return Generate.createWaterBottle(STAMINA_FILLING_TEXTURE);
+            return Generate.createWaterBottle(ITEM_STAMINA_TEXTURE);
         } else if (chance > mediumStamina) { // 40% chance for medium
-            return Generate.createApple(STAMINA_FILLING_TEXTURE);
+            return Generate.createApple(ITEM_STAMINA_TEXTURE);
         } else { // 40% chance for minor
-            return Generate.createSandwich(STAMINA_FILLING_TEXTURE);
+            return Generate.createSandwich(ITEM_STAMINA_TEXTURE);
         }
     }
 
@@ -336,11 +343,11 @@ public class GameScreen implements Screen {
         final int majorScore = 8;
         final int mediumScore = 5;
         if (chance > majorScore) { // 20% chance for major
-            return Generate.createNails(STAMINA_FILLING_TEXTURE);
+            return Generate.createNails(ITEM_SCORE_TEXTURE);
         } else if (chance > mediumScore) { // 30% chance for medium
-            return Generate.createWoodenPlank(STAMINA_FILLING_TEXTURE);
+            return Generate.createWoodenPlank(ITEM_SCORE_TEXTURE);
         } else { // 50% chance for minor
-            return Generate.createMetalSheet(STAMINA_FILLING_TEXTURE);
+            return Generate.createMetalSheet(ITEM_SCORE_TEXTURE);
         }
     }
 
