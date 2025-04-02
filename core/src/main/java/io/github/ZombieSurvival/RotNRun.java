@@ -11,6 +11,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import io.github.ZombieSurvival.Screens.MainMenuScreen;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
 /**
  * Base game class.
  *
@@ -30,6 +35,11 @@ public class RotNRun extends Game {
      * Hold the mouses current coordinates.
      */
     public static final Vector2 MOUSE_POSITION = new Vector2();
+    /**
+     * Path to save file.
+     */
+    public static final Path SAVE_FILE_PATH = Path.of(
+        "core/src/main/java/io/github/ZombieSurvival/Save.txt");
 
     private SpriteBatch spriteBatch;
     private BitmapFont font;
@@ -121,6 +131,21 @@ public class RotNRun extends Game {
         // of viewport height to screen height
         font.setUseIntegerPositions(false);
         font.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight() - fontScale);
+
+        if (!Files.exists(SAVE_FILE_PATH)) {
+            try {
+                Files.createFile(SAVE_FILE_PATH);
+                System.out.println("New save file created.");
+                List<String> scores = List.of(
+                    "0",
+                    "0",
+                    "0"
+                );
+                Files.write(SAVE_FILE_PATH, scores);
+            } catch (IOException error) {
+                System.out.println("New save file failed to be created.");
+            }
+        }
         this.setScreen(new MainMenuScreen(this));
     }
 
