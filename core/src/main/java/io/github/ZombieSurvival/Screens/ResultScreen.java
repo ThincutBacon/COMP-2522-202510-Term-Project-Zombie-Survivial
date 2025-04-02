@@ -184,12 +184,15 @@ public class ResultScreen implements Screen {
         final float newY = scoreY - (glyphLayout.height * 3.5f);
         switch (difficulty) {
             case EASY:
+                easyHighScore = score;
                 easyNewHighScore = true;
                 break;
             case NORMAL:
+                normalHighScore = score;
                 normalNewHighScore = true;
                 break;
             case HARD:
+                hardHighScore = score;
                 hardNewHighScore = true;
                 break;
             default:
