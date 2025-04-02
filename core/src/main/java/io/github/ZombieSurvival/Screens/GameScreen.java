@@ -33,6 +33,9 @@ public class GameScreen implements Screen {
     private static final float SPRITE_WIDTH = 80f;
     private static final float SPRITE_HEIGHT = 1.5f * SPRITE_WIDTH;
     private static final float SPRITE_HIT_BOX_INSET = 10f;
+    // Item Sprite
+    private static final float ITEM_SPRITE_LENGTH = 80f;
+    private static final float ITEM_SPRITE_HIT_BOX_INSET = 5f;
     // Platform
     private static final float PLATFORM_WIDTH = 9f * 150f;
     private static final float PLATFORM_HEIGHT = 7f * 150f;
@@ -257,7 +260,7 @@ public class GameScreen implements Screen {
      */
     private void createItem() {
         Item itemSprite = chooseRandomItem();
-        itemSprite.setSize(SPRITE_WIDTH, SPRITE_WIDTH);
+        itemSprite.setSize(ITEM_SPRITE_LENGTH, ITEM_SPRITE_LENGTH);
         // Randomize spawn location
         itemSprite.setX(MathUtils.random(PLATFORM_AREA_X, PLATFORM_AREA_MAX_X));
         itemSprite.setY(MathUtils.random(PLATFORM_AREA_Y, PLATFORM_AREA_MAX_Y));
@@ -347,7 +350,7 @@ public class GameScreen implements Screen {
     private void drawAll() {
         // For brevity
         SpriteBatch batch = game.getSpriteBatch();
-        BitmapFont font = game.getFont();
+        BitmapFont font = game.getNormalText();
         // Draw elements to screen
         batch.begin();
         drawBackground(batch);
@@ -431,7 +434,9 @@ public class GameScreen implements Screen {
     private void drawHUDScore(final SpriteBatch batch, final BitmapFont font) {
         String scoreDisplay = String.format("%03d", playerSprite.getCurrentScore());
         font.draw(batch, scoreDisplay,
-            TOP_GUI_WINDOW_X_PADDING, RotNRun.VIRTUAL_HEIGHT - TOP_GUI_WINDOW_Y_PADDING - STAMINA_CONTAINER_TEXTURE.getHeight() * 2);
+            TOP_GUI_WINDOW_X_PADDING,
+            RotNRun.VIRTUAL_HEIGHT - TOP_GUI_WINDOW_Y_PADDING
+                - STAMINA_CONTAINER_TEXTURE.getHeight() * 2);
     }
 
     /*
@@ -441,7 +446,7 @@ public class GameScreen implements Screen {
         final float staminaWidth = 9 * 120;
         final float staminaHeight = 9 * 9;
         final float staminaY = TOP_GUI_WINDOW_Y_PADDING;
-        final float staminaX =  RotNRun.VIRTUAL_WIDTH / 2 - staminaWidth / 2;
+        final float staminaX =  RotNRun.VIRTUAL_WIDTH / 2f - staminaWidth / 2f;
         final float staminaPercentage =
             (float) playerSprite.getCurrentCharge() / playerSprite.getMaxCharge();
         batch.draw(STAMINA_FILLING_TEXTURE, staminaX, staminaY,
@@ -449,7 +454,6 @@ public class GameScreen implements Screen {
         batch.draw(STAMINA_CONTAINER_TEXTURE, staminaX, staminaY,
             staminaWidth, staminaHeight);
     }
-
 
     /*
      * Checks for all types of input.
@@ -499,29 +503,25 @@ public class GameScreen implements Screen {
         float delta = Gdx.graphics.getDeltaTime();
         game.setMousePosition();
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-            || Gdx.input.isKeyPressed(Input.Keys.D)
-            || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_6)) {
+            || Gdx.input.isKeyPressed(Input.Keys.D)) {
             playerSprite.translateX(PLAYER_SPEED * delta);
             if (!playerSprite.isFlipX()) {
                 playerSprite.flip(true, false);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)
-            || Gdx.input.isKeyPressed(Input.Keys.A)
-            || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_4)) {
+            || Gdx.input.isKeyPressed(Input.Keys.A)) {
             playerSprite.translateX(-PLAYER_SPEED * delta);
             if (playerSprite.isFlipX()) {
                 playerSprite.flip(true, false);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)
-            || Gdx.input.isKeyPressed(Input.Keys.S)
-            || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_2)) {
+            || Gdx.input.isKeyPressed(Input.Keys.S)) {
             playerSprite.translateY(-PLAYER_SPEED * delta);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.UP)
-            || Gdx.input.isKeyPressed(Input.Keys.W)
-            || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_8)) {
+            || Gdx.input.isKeyPressed(Input.Keys.W)) {
             playerSprite.translateY(PLAYER_SPEED * delta);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && playerSprite.getIsCharged()) {
@@ -533,9 +533,9 @@ public class GameScreen implements Screen {
     /*
      * Update hit box position.
      */
-    private void updateEntityHitBoxCoordinates(final Rectangle entityHitBox, final Entity entity) {
-        entityHitBox.setPosition(entity.getX() + SPRITE_HIT_BOX_INSET,
-                                    entity.getY() + SPRITE_HIT_BOX_INSET);
+    private void updateEntityHitBoxCoordinates(final Rectangle entityHitBox, final Entity entity,
+                                               final float insetValue) {
+        entityHitBox.setPosition(entity.getX() + insetValue, entity.getY() + insetValue);
     }
 
     /*
@@ -583,7 +583,7 @@ public class GameScreen implements Screen {
      */
     private void logicEnemyHitBox() {
         for (Enemy enemy : enemySprites) {
-            updateEntityHitBoxCoordinates(enemyHitBox, enemy);
+            updateEntityHitBoxCoordinates(enemyHitBox, enemy, SPRITE_HIT_BOX_INSET);
             if (abilityActivated) {
                 playerAbility.setPosition(playerSprite.getX() + (SPRITE_WIDTH / 2),
                     playerSprite.getY() + (SPRITE_HEIGHT / 2));
@@ -604,8 +604,8 @@ public class GameScreen implements Screen {
      */
     private void logicItemPickup() {
         for (Item item : itemSprites) {
-            updateEntityHitBoxCoordinates(playerHitBox, playerSprite);
-            updateEntityHitBoxCoordinates(itemHitBox, item);
+            updateEntityHitBoxCoordinates(playerHitBox, playerSprite, SPRITE_HIT_BOX_INSET);
+            updateEntityHitBoxCoordinates(itemHitBox, item, ITEM_SPRITE_HIT_BOX_INSET);
             if (itemHitBox.overlaps(playerHitBox)) {
                 item.increasePlayerStat(playerSprite);
                 itemSprites.removeValue(item, true);
@@ -620,7 +620,7 @@ public class GameScreen implements Screen {
     private void logicEndRun() {
         if (playerSprite.getCurrentStamina() <= 0) {
             long timeElapsed = TimeUtils.timeSinceMillis(startGameInMilliSeconds);
-            game.setScreen(new ResultScreen(game));
+            game.setScreen(new MainMenuScreen(game));
             dispose();
         }
     }
@@ -630,7 +630,7 @@ public class GameScreen implements Screen {
      */
     private void logicGameOver() {
         if (playerSprite.getCurrentHP() <= 0) {
-            game.setScreen(new GameOverScreen(game));
+            game.setScreen(new MainMenuScreen(game));
             dispose();
         }
     }
