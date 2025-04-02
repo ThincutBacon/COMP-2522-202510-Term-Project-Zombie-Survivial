@@ -9,6 +9,11 @@ import com.badlogic.gdx.graphics.Texture;
  * @version 2025
  */
 public class Player extends Entity {
+    /*
+     * The amount of stamina consumed when using the ability.
+     */
+    private static final int ABILITY_COST = -20;
+
     private final int maxHP;
     private final int maxStamina;
     private final int maxCharge;
@@ -17,7 +22,6 @@ public class Player extends Entity {
     private int currentCharge;
     private boolean isCharged;
     private int currentScore;
-
     /**
      * Constructs a Player object with a specified maxHP, maxStamina, and maxCharge.
      *
@@ -162,6 +166,7 @@ public class Player extends Entity {
      */
     public void useAbility() {
         if (isCharged) {
+            modifyCurrentStamina(ABILITY_COST);
             currentCharge = 0;
             isCharged = false;
         }
