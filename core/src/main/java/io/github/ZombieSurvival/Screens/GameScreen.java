@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.TimeUtils;
 import io.github.ZombieSurvival.Sprites.Entity;
 import io.github.ZombieSurvival.Sprites.EntityComparator;
 import io.github.ZombieSurvival.Sprites.Player;
@@ -34,7 +33,7 @@ public class GameScreen implements Screen {
     private static final float SPRITE_HEIGHT = 1.5f * SPRITE_WIDTH;
     private static final float SPRITE_HIT_BOX_INSET = 10f;
     // Item Sprite
-    private static final float ITEM_SPRITE_LENGTH = 80f;
+    private static final float ITEM_SPRITE_LENGTH = 65f;
     private static final float ITEM_SPRITE_HIT_BOX_INSET = 0f;
     // Platform
     private static final float PLATFORM_WIDTH = 9f * 150f;
@@ -95,6 +94,7 @@ public class GameScreen implements Screen {
     // Sprites
     private final Array<Entity> allEntities;
     // Player
+    private final Difficulty gameDifficulty;
     private final Player playerSprite;
     private final Rectangle playerHitBox;
     private final Circle playerAbility;
@@ -105,7 +105,6 @@ public class GameScreen implements Screen {
     private final Array<Item> itemSprites;
     private final Rectangle itemHitBox;
     // Backend
-    private final long startGameInMilliSeconds;
     private float staminaDecreaseTimer;
     private float abilityChargeTimer;
     private boolean abilityActivated;
@@ -130,7 +129,8 @@ public class GameScreen implements Screen {
         // Sprites
         allEntities = new Array<>();
         // Player
-        playerSprite = Generate.createPlayer(PLAYER_TEXTURE, difficulty);
+        gameDifficulty = difficulty;
+        playerSprite = Generate.createPlayer(PLAYER_TEXTURE, gameDifficulty);
         playerSprite.setSize(SPRITE_WIDTH, SPRITE_HEIGHT);
         playerSprite.setCenter((RotNRun.VIRTUAL_WIDTH / 2f), (RotNRun.VIRTUAL_HEIGHT / 2f));
         allEntities.add(playerSprite);
@@ -147,10 +147,9 @@ public class GameScreen implements Screen {
         // Items
         itemSprites = new Array<>();
         itemHitBox = new Rectangle();
-        enemyHitBox.setWidth(SPRITE_WIDTH - (SPRITE_HIT_BOX_INSET * 2));
-        enemyHitBox.setHeight(SPRITE_WIDTH - (SPRITE_HIT_BOX_INSET * 2));
+        itemHitBox.setWidth(ITEM_SPRITE_LENGTH - (ITEM_SPRITE_HIT_BOX_INSET * 2));
+        itemHitBox.setHeight(ITEM_SPRITE_LENGTH - (ITEM_SPRITE_HIT_BOX_INSET * 2));
         // Backend
-        startGameInMilliSeconds = TimeUtils.millis();
         staminaDecreaseTimer = 0;
         abilityChargeTimer = 0;
         abilityActivated = false;
@@ -357,13 +356,13 @@ public class GameScreen implements Screen {
     private void drawAll() {
         // For brevity
         SpriteBatch batch = game.getSpriteBatch();
-        BitmapFont font = game.getNormalText();
+        BitmapFont normalText = game.getNormalText();
         // Draw elements to screen
         batch.begin();
         drawBackground(batch);
         drawSprites(batch);
         drawHUDStamina(batch);
-        drawHUDScore(batch, font);
+        drawHUDScore(batch, normalText);
         drawHUDHealth(batch);
         drawHUDAbility(batch);
         batch.end();
@@ -626,8 +625,7 @@ public class GameScreen implements Screen {
      */
     private void logicEndRun() {
         if (playerSprite.getCurrentStamina() <= 0) {
-            long timeElapsed = TimeUtils.timeSinceMillis(startGameInMilliSeconds);
-            game.setScreen(new MainMenuScreen(game));
+            game.setScreen(new ResultScreen(game, gameDifficulty, playerSprite.getCurrentScore()));
             dispose();
         }
     }
@@ -637,7 +635,7 @@ public class GameScreen implements Screen {
      */
     private void logicGameOver() {
         if (playerSprite.getCurrentHP() <= 0) {
-            game.setScreen(new MainMenuScreen(game));
+            game.setScreen(new GameOverScreen(game));
             dispose();
         }
     }

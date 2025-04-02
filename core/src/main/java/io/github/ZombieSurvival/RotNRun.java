@@ -137,7 +137,7 @@ public class RotNRun extends Game {
                 System.out.println("New save file created.");
                 List<String> scores = List.of(
                     "0",
-                    "true",
+                    "false",
                     "0",
                     "false",
                     "0",
