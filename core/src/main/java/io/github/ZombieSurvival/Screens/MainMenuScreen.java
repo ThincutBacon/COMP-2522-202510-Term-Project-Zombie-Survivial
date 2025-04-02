@@ -3,9 +3,14 @@ package io.github.ZombieSurvival.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import io.github.ZombieSurvival.RotNRun;
 import io.github.ZombieSurvival.Sprites.Difficulty;
+
+import java.io.IOException;
+import java.util.Scanner;
 
 /**
  * The main menu of the game.
@@ -20,15 +25,15 @@ public class MainMenuScreen implements Screen {
     private final float startWidth = 900f;
     private final float startHeight = 90f;
     private final float startX = (RotNRun.VIRTUAL_WIDTH / 2f) - (startWidth / 2f);
-    private final float startY = 500f;
+    private final float startY = 520f;
     private final float startMaxX = startX + startWidth;
     private final float startMaxY = startY + startHeight;
-    private final float buttonLayoutOffsetY = -150f;
+    private final float buttonLayoutOffsetY = -200f;
     // Difficulty Button Values
     private final float difficultyWidth = 290f;
     private final float difficultyHeight = 100f;
     private final float difficultyPadding = difficultyWidth + 15f;
-    private final float difficultyY = 500f;
+    private final float difficultyY = 430f;
     private final float difficultyMaxY = difficultyY + difficultyHeight;
     private final float difficultyEasyX = (RotNRun.VIRTUAL_WIDTH / 2f) - (startWidth / 2f);
     private final float difficultyEasyMaxX = difficultyEasyX + difficultyWidth;
@@ -53,6 +58,10 @@ public class MainMenuScreen implements Screen {
     private final Texture exitButtonInactive;
     private final Texture exitButtonActive;
 
+    private int easyHighScore = 0;
+    private int normalHighScore = 0;
+    private int hardHighScore = 0;
+
     /**
      * Constructs a MainMenuScreen object with the specified instance of game.
      *
@@ -76,6 +85,21 @@ public class MainMenuScreen implements Screen {
         hardButtonActive = new Texture("Difficulty_Hard_Active.png");
         exitButtonInactive = new Texture("Exit_Button_Inactive.png");
         exitButtonActive = new Texture("Exit_Button_Active.png");
+
+
+        try {
+            Scanner scanner = new Scanner(RotNRun.SAVE_FILE_PATH);
+            easyHighScore = scanner.nextInt();
+            normalHighScore = scanner.nextInt();
+            hardHighScore = scanner.nextInt();
+            System.out.println("Easy Difficulty High Score: " + easyHighScore);
+            System.out.println("Normal Difficulty High Score: " + normalHighScore);
+            System.out.println("Hard Difficulty High Score: " + hardHighScore);
+
+        } catch (IOException error) {
+            System.out.println("Failed to read scores from save file.");
+        }
+
     }
 
     @Override
@@ -98,6 +122,7 @@ public class MainMenuScreen implements Screen {
         // Draw elements to screen
         batch.begin();
             drawTitle(batch);
+            drawDifficultyHighScores(batch);
             drawDifficultyButtons(batch);
             drawButtons(batch);
         batch.end();
@@ -144,6 +169,40 @@ public class MainMenuScreen implements Screen {
         } else {
             batch.draw(exitButtonInactive, exitXY, exitXY, exitLength, exitLength);
         }
+    }
+
+    /*
+     * Draws the difficulty high scores to screen.
+     */
+    private void drawDifficultyHighScores(final SpriteBatch batch) {
+        BitmapFont font = game.getFont();
+        final float padding = 20f;
+
+        GlyphLayout glyphLayout = new GlyphLayout();
+        glyphLayout.setText(font, "HIGH SCORES");
+        float highScoreTextXCenter = (startWidth / 2) - (glyphLayout.width / 2);
+        float highScoreTextY = difficultyMaxY + (glyphLayout.height + padding) * 2;
+        font.draw(batch, "HIGH SCORES",
+            difficultyEasyX + highScoreTextXCenter, highScoreTextY);
+
+        glyphLayout.setText(font, "000");
+        float difficultyTextXCenter = (difficultyWidth / 2) - (glyphLayout.width / 2);
+        float difficultyTextY = difficultyMaxY + glyphLayout.height + padding;
+
+        // Easy
+        String easyHS = String.format("%03d", easyHighScore);
+        font.draw(batch, easyHS,
+            difficultyEasyX + difficultyTextXCenter, difficultyTextY);
+
+        // Normal
+        String normalHS = String.format("%03d", normalHighScore);
+        font.draw(batch, easyHS,
+            difficultyNormalX + difficultyTextXCenter, difficultyTextY);
+
+        // Hard
+        String hardHS = String.format("%03d", hardHighScore);
+        font.draw(batch, hardHS,
+            difficultyHardX + difficultyTextXCenter, difficultyTextY);
     }
 
     /*
