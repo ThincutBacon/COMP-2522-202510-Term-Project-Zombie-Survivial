@@ -11,6 +11,8 @@ import io.github.ZombieSurvival.RotNRun;
 import io.github.ZombieSurvival.Sprites.Difficulty;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -96,10 +98,28 @@ public class MainMenuScreen implements Screen {
             hardNewHighScore = scanner.nextBoolean();
             normalUnlocked = scanner.nextBoolean();
             hardUnlocked = scanner.nextBoolean();
-            System.out.println("Easy Difficulty High Score: " + easyHighScore);
-            System.out.println("Normal Difficulty High Score: " + normalHighScore);
-            System.out.println("Hard Difficulty High Score: " + hardHighScore);
+            overwriteNewSave();
+        } catch (IOException error) {
+            System.out.println("Failed to read scores from save file.");
+        }
+    }
 
+    /*
+     * Overwrites new values for high scores once viewed.
+     */
+    private void overwriteNewSave() {
+        try {
+            List<String> scores = List.of(
+                Integer.toString(easyHighScore),
+                "false",
+                Integer.toString(normalHighScore),
+                "false",
+                Integer.toString(hardHighScore),
+                "false",
+                Boolean.toString(normalUnlocked),
+                Boolean.toString(hardUnlocked)
+            );
+            Files.write(RotNRun.SAVE_FILE_PATH, scores);
         } catch (IOException error) {
             System.out.println("Failed to read scores from save file.");
         }
