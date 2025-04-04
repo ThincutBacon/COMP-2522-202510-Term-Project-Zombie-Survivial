@@ -27,70 +27,55 @@ import io.github.ZombieSurvival.RotNRun;
  * @version 2025
  */
 public class GameScreen implements Screen {
-    // Constants
-    // Sprite
-    private static final float SPRITE_WIDTH = 80f;
-    private static final float SPRITE_HEIGHT = 1.5f * SPRITE_WIDTH;
-    private static final float SPRITE_HIT_BOX_INSET = 10f;
-    // Item Sprite
-    private static final float ITEM_SPRITE_LENGTH = 65f;
-    private static final float ITEM_SPRITE_HIT_BOX_INSET = 0f;
-    // Platform
-    private static final float PLATFORM_WIDTH = 9f * 150f;
-    private static final float PLATFORM_HEIGHT = 7f * 150f;
-    private static final float PLATFORM_X = (RotNRun.VIRTUAL_WIDTH / 2f) - (PLATFORM_WIDTH / 2f);
-    // Platform play area
-    private static final float PLATFORM_AREA_PADDING = 20f;
-    private static final float PLATFORM_AREA_X = PLATFORM_X + PLATFORM_AREA_PADDING;
-    private static final float PLATFORM_AREA_MAX_X = PLATFORM_X + PLATFORM_WIDTH
-                                                - SPRITE_WIDTH - PLATFORM_AREA_PADDING;
-    private static final float PLATFORM_AREA_Y = 150f + PLATFORM_AREA_PADDING;
-    private static final float PLATFORM_AREA_MAX_Y = PLATFORM_HEIGHT - SPRITE_HEIGHT
-                                                + PLATFORM_AREA_PADDING;
-    // Player movement speed
-    private static final float PLAYER_SPEED = 300f;
-    // Player ability radius
-    private static final float ABILITY_RADIUS = 150f;
-    // GUI
-    private static final float TOP_GUI_WINDOW_X_PADDING = 60;
-    private static final float TOP_GUI_WINDOW_Y_PADDING = 40;
-    private static final float TOP_GUI_Y_CENTER = RotNRun.VIRTUAL_HEIGHT - 50
-                                                - TOP_GUI_WINDOW_Y_PADDING;
-    // Textures
-    // Background
-    private static final Texture BACKGROUND_TEXTURE =
-        new Texture("City_Ruins.png");
-    private static final Texture PLATFORM_TEXTURE =
-        new Texture("Map_Platform.png");
-    // Player
-    private static final Texture PLAYER_TEXTURE =
-        new Texture("Player_Sprite_Large.png");
-    private static final Texture PLAYER_DAMAGED_TEXTURE =
-        new Texture("Player_Sprite_Large_Damaged.png");
-    private static final Texture ABILITY_TEXTURE =
-        new Texture("Ability_Circle.png");
-    // Enemy
-    private static final Texture STANDARD_ZOMBIE_TEXTURE =
-        new Texture("Zombie_Sprite_Large.png");
-    // Items
-    private static final Texture ITEM_HEALTH_TEXTURE =
-        new Texture("Item_Health.png");
-    private static final Texture ITEM_STAMINA_TEXTURE =
-        new Texture("Item_Stamina.png");
-    private static final Texture ITEM_SCORE_TEXTURE =
-        new Texture("Item_Score.png");
-    // HUD
-    private static final Texture HEALTH_FILLED_TEXTURE =
-        new Texture("Health_Filled.png");
-    private static final Texture HEALTH_EMPTY_TEXTURE =
-        new Texture("Health_Empty.png");
-    private static final Texture STAMINA_CONTAINER_TEXTURE =
-        new Texture("Stamina_Bar_Container.png");
-    private static final Texture STAMINA_FILLING_TEXTURE =
-        new Texture("Stamina_Bar_Filling.png");
-    // Instance Variables
     // Current running game
     private final RotNRun game;
+    // Sprite
+    private final float spriteWidth = 80f;
+    private final float spriteHeight = 1.5f * spriteWidth;
+    private final float spriteHitBoxInset = 10f;
+    // Item Sprite
+    private final float itemSpriteLength = 65f;
+    private final float itemSpriteHitBoxInset = 0f;
+    // Platform
+    private final float platformWidth = 9f * 150f;
+    private final float platformHeight = 7f * 150f;
+    private final float platformX = (RotNRun.VIRTUAL_WIDTH / 2f) - (platformWidth / 2f);
+    // Platform play area
+    private final float platformAreaPadding = 20f;
+    private final float platformAreaX = platformX + platformAreaPadding;
+    private final float platformAreaMaxX = platformX + platformWidth
+                                                - spriteWidth - platformAreaPadding;
+    private final float platformAreaY = 150f + platformAreaPadding;
+    private final float platformAreaMaxY = platformHeight - spriteHeight
+                                                + platformAreaPadding;
+    // Player movement speed
+    private final float playerSpeed = 300f;
+    // Player ability radius
+    private final float abilityRadius = 150f;
+    // GUI
+    private final float topGuiWindowXPadding = 60;
+    private final float topGuiWindowYPadding = 40;
+    private final float topGuiYCenter = RotNRun.VIRTUAL_HEIGHT - 50
+                                                - topGuiWindowYPadding;
+    // Textures
+    // Background
+    private final Texture backgroundTexture = new Texture("City_Ruins.png");
+    private final Texture platformTexture = new Texture("Map_Platform.png");
+    // Player
+    private final Texture playerTexture = new Texture("Player_Sprite_Large.png");
+    private final Texture playerDamagedTexture = new Texture("Player_Sprite_Large_Damaged.png");
+    private final Texture abilityTexture = new Texture("Ability_Circle.png");
+    // Enemy
+    private final Texture standardZombieTexture = new Texture("Zombie_Sprite_Large.png");
+    // Items
+    private final Texture itemHealthTexture = new Texture("Item_Health.png");
+    private final Texture itemStaminaTexture = new Texture("Item_Stamina.png");
+    private final Texture itemScoreTexture = new Texture("Item_Score.png");
+    // HUD
+    private final Texture healthFilledTexture = new Texture("Health_Filled.png");
+    private final Texture healthEmptyTexture = new Texture("Health_Empty.png");
+    private final Texture staminaContainerTexture = new Texture("Stamina_Bar_Container.png");
+    private final Texture staminaFillingTexture = new Texture("Stamina_Bar_Filling.png");
     // Sprites
     private final Array<Entity> allEntities;
     // Player
@@ -130,25 +115,25 @@ public class GameScreen implements Screen {
         allEntities = new Array<>();
         // Player
         gameDifficulty = difficulty;
-        playerSprite = Generate.createPlayer(PLAYER_TEXTURE, gameDifficulty);
-        playerSprite.setSize(SPRITE_WIDTH, SPRITE_HEIGHT);
+        playerSprite = Generate.createPlayer(playerTexture, gameDifficulty);
+        playerSprite.setSize(spriteWidth, spriteHeight);
         playerSprite.setCenter((RotNRun.VIRTUAL_WIDTH / 2f), (RotNRun.VIRTUAL_HEIGHT / 2f));
         allEntities.add(playerSprite);
         playerHitBox = new Rectangle();
-        playerHitBox.setWidth(SPRITE_WIDTH - (SPRITE_HIT_BOX_INSET * 2));
-        playerHitBox.setHeight(SPRITE_HEIGHT - (SPRITE_HIT_BOX_INSET * 2));
+        playerHitBox.setWidth(spriteWidth - (spriteHitBoxInset * 2));
+        playerHitBox.setHeight(spriteHeight - (spriteHitBoxInset * 2));
         playerAbility = new Circle();
-        playerAbility.setRadius(ABILITY_RADIUS);
+        playerAbility.setRadius(abilityRadius);
         // Enemies
         enemySprites = new Array<>();
         enemyHitBox = new Rectangle();
-        enemyHitBox.setWidth(SPRITE_WIDTH - (SPRITE_HIT_BOX_INSET * 2));
-        enemyHitBox.setHeight(SPRITE_HEIGHT - (SPRITE_HIT_BOX_INSET * 2));
+        enemyHitBox.setWidth(spriteWidth - (spriteHitBoxInset * 2));
+        enemyHitBox.setHeight(spriteHeight - (spriteHitBoxInset * 2));
         // Items
         itemSprites = new Array<>();
         itemHitBox = new Rectangle();
-        itemHitBox.setWidth(ITEM_SPRITE_LENGTH - (ITEM_SPRITE_HIT_BOX_INSET * 2));
-        itemHitBox.setHeight(ITEM_SPRITE_LENGTH - (ITEM_SPRITE_HIT_BOX_INSET * 2));
+        itemHitBox.setWidth(itemSpriteLength - (itemSpriteHitBoxInset * 2));
+        itemHitBox.setHeight(itemSpriteLength - (itemSpriteHitBoxInset * 2));
         // Backend
         staminaDecreaseTimer = 0;
         abilityChargeTimer = 0;
@@ -173,7 +158,7 @@ public class GameScreen implements Screen {
     @Override
     public void render(final float delta) {
         // Clears screen
-        game.applyViewport();
+        game.clearViewport();
 
         // Increments and checks on timers
         incrementTimers();
@@ -253,10 +238,10 @@ public class GameScreen implements Screen {
      */
     private void createEnemy() {
         Enemy enemySprite = chooseRandomEnemy();
-        enemySprite.setSize(SPRITE_WIDTH, SPRITE_HEIGHT);
+        enemySprite.setSize(spriteWidth, spriteHeight);
         // Randomize spawn location
-        enemySprite.setX(MathUtils.random(PLATFORM_AREA_X, PLATFORM_AREA_MAX_X));
-        enemySprite.setY(MathUtils.random(PLATFORM_AREA_Y, PLATFORM_AREA_MAX_Y));
+        enemySprite.setX(MathUtils.random(platformAreaX, platformAreaMaxX));
+        enemySprite.setY(MathUtils.random(platformAreaY, platformAreaMaxY));
         enemySprites.add(enemySprite); // Add it to the list
         allEntities.add(enemySprite);
     }
@@ -266,10 +251,10 @@ public class GameScreen implements Screen {
      */
     private void createItem() {
         Item itemSprite = chooseRandomItem();
-        itemSprite.setSize(ITEM_SPRITE_LENGTH, ITEM_SPRITE_LENGTH);
+        itemSprite.setSize(itemSpriteLength, itemSpriteLength);
         // Randomize spawn location
-        itemSprite.setX(MathUtils.random(PLATFORM_AREA_X, PLATFORM_AREA_MAX_X));
-        itemSprite.setY(MathUtils.random(PLATFORM_AREA_Y, PLATFORM_AREA_MAX_Y));
+        itemSprite.setX(MathUtils.random(platformAreaX, platformAreaMaxX));
+        itemSprite.setY(MathUtils.random(platformAreaY, platformAreaMaxY));
         itemSprites.add(itemSprite); // Add it to the list
         allEntities.add(itemSprite);
     }
@@ -282,14 +267,13 @@ public class GameScreen implements Screen {
         final int slowZombie = 38;
         final int fastZombie = 32;
         if (chance > slowZombie) { // 24% chance for healing item
-            return Generate.createBrokenZombie(STANDARD_ZOMBIE_TEXTURE);
+            return Generate.createBrokenZombie(standardZombieTexture);
         } else if (chance > fastZombie) { // 12% chance for stamina item
-            return Generate.createDogZombie(STANDARD_ZOMBIE_TEXTURE);
+            return Generate.createDogZombie(standardZombieTexture);
         } else { // 64% chance for score item
-            return Generate.createStandardZombie(STANDARD_ZOMBIE_TEXTURE);
+            return Generate.createStandardZombie(standardZombieTexture);
         }
     }
-
 
     /*
      * Selects and returns a random item.
@@ -314,9 +298,9 @@ public class GameScreen implements Screen {
     private Item chooseRandomHealthItem(final int chance) {
         final int majorHealth = 7;
         if (chance > majorHealth) { // 30% chance for major
-            return Generate.createBandage(ITEM_HEALTH_TEXTURE);
+            return Generate.createBandage(itemHealthTexture);
         } else { // 70% chance for minor
-            return Generate.createMedKit(ITEM_HEALTH_TEXTURE);
+            return Generate.createMedKit(itemHealthTexture);
         }
     }
 
@@ -327,11 +311,11 @@ public class GameScreen implements Screen {
         final int majorStamina = 8;
         final int mediumStamina = 4;
         if (chance > majorStamina) { // 20% chance for major
-            return Generate.createWaterBottle(ITEM_STAMINA_TEXTURE);
+            return Generate.createWaterBottle(itemStaminaTexture);
         } else if (chance > mediumStamina) { // 40% chance for medium
-            return Generate.createApple(ITEM_STAMINA_TEXTURE);
+            return Generate.createApple(itemStaminaTexture);
         } else { // 40% chance for minor
-            return Generate.createSandwich(ITEM_STAMINA_TEXTURE);
+            return Generate.createSandwich(itemStaminaTexture);
         }
     }
 
@@ -342,13 +326,15 @@ public class GameScreen implements Screen {
         final int majorScore = 8;
         final int mediumScore = 5;
         if (chance > majorScore) { // 20% chance for major
-            return Generate.createNails(ITEM_SCORE_TEXTURE);
+            return Generate.createNails(itemScoreTexture);
         } else if (chance > mediumScore) { // 30% chance for medium
-            return Generate.createWoodenPlank(ITEM_SCORE_TEXTURE);
+            return Generate.createWoodenPlank(itemScoreTexture);
         } else { // 50% chance for minor
-            return Generate.createMetalSheet(ITEM_SCORE_TEXTURE);
+            return Generate.createMetalSheet(itemScoreTexture);
         }
     }
+
+
 
     /*
      * Draws all elements onto the screen.
@@ -359,12 +345,12 @@ public class GameScreen implements Screen {
         BitmapFont normalText = game.getNormalText();
         // Draw elements to screen
         batch.begin();
-        drawBackground(batch);
-        drawSprites(batch);
-        drawHUDStamina(batch);
-        drawHUDScore(batch, normalText);
-        drawHUDHealth(batch);
-        drawHUDAbility(batch);
+            drawBackground(batch);
+            drawSprites(batch);
+            drawHUDStamina(batch);
+            drawHUDScore(batch, normalText);
+            drawHUDHealth(batch);
+            drawHUDAbility(batch);
         batch.end();
     }
 
@@ -372,9 +358,9 @@ public class GameScreen implements Screen {
      * Draws background textures to the screen.
      */
     private void drawBackground(final SpriteBatch batch) {
-        batch.draw(BACKGROUND_TEXTURE, 0, 0, RotNRun.VIRTUAL_WIDTH, RotNRun.VIRTUAL_HEIGHT);
-        batch.draw(PLATFORM_TEXTURE, RotNRun.VIRTUAL_WIDTH / 2f - PLATFORM_WIDTH / 2f,
-            0, PLATFORM_WIDTH, PLATFORM_HEIGHT);
+        batch.draw(backgroundTexture, 0, 0, RotNRun.VIRTUAL_WIDTH, RotNRun.VIRTUAL_HEIGHT);
+        batch.draw(platformTexture, RotNRun.VIRTUAL_WIDTH / 2f - platformWidth / 2f,
+            0, platformWidth, platformHeight);
     }
 
     /*
@@ -382,15 +368,15 @@ public class GameScreen implements Screen {
      */
     private void drawSprites(final SpriteBatch batch) {
         if (abilityActivated) {
-            batch.draw(ABILITY_TEXTURE,
-                playerSprite.getX() + (SPRITE_WIDTH / 2) - ABILITY_RADIUS,
-                playerSprite.getY() + (SPRITE_HEIGHT / 2) - ABILITY_RADIUS,
-                ABILITY_RADIUS * 2, ABILITY_RADIUS * 2);
+            batch.draw(abilityTexture,
+                playerSprite.getX() + (spriteWidth / 2) - abilityRadius,
+                playerSprite.getY() + (spriteHeight / 2) - abilityRadius,
+                abilityRadius * 2, abilityRadius * 2);
         }
         if (playerIsInvincible) {
-            playerSprite.setTexture(PLAYER_DAMAGED_TEXTURE);
+            playerSprite.setTexture(playerDamagedTexture);
         } else {
-            playerSprite.setTexture(PLAYER_TEXTURE);
+            playerSprite.setTexture(playerTexture);
         }
         allEntities.sort(new EntityComparator());
         for (Entity entity: allEntities) {
@@ -405,16 +391,16 @@ public class GameScreen implements Screen {
         final float healthWidth = 11 * 10;
         final float healthHeight = 9 * 10;
         final float healthMargin = 20;
-        final float healthY = TOP_GUI_Y_CENTER - (healthHeight / 2);
-        float healthX = RotNRun.VIRTUAL_WIDTH - healthWidth - TOP_GUI_WINDOW_X_PADDING;
+        final float healthY = topGuiYCenter - (healthHeight / 2);
+        float healthX = RotNRun.VIRTUAL_WIDTH - healthWidth - topGuiWindowXPadding;
         for (int index = 0;
              index < playerSprite.getCurrentHP(); index++) {
-            batch.draw(HEALTH_FILLED_TEXTURE, healthX, healthY, healthWidth, healthHeight);
+            batch.draw(healthFilledTexture, healthX, healthY, healthWidth, healthHeight);
             healthX -= healthWidth + healthMargin;
         }
         for (int index = 0;
              index < (playerSprite.getMaxHP() - playerSprite.getCurrentHP()); index++) {
-            batch.draw(HEALTH_EMPTY_TEXTURE, healthX, healthY, healthWidth, healthHeight);
+            batch.draw(healthEmptyTexture, healthX, healthY, healthWidth, healthHeight);
             healthX -= healthWidth + healthMargin;
         }
     }
@@ -425,12 +411,12 @@ public class GameScreen implements Screen {
     private void drawHUDStamina(final SpriteBatch batch) {
         final float staminaWidth = 9 * 90;
         final float staminaHeight = 9 * 9;
-        final float staminaY = TOP_GUI_Y_CENTER - (staminaHeight / 2);
+        final float staminaY = topGuiYCenter - (staminaHeight / 2);
         final float staminaPercentage =
             (float) playerSprite.getCurrentStamina() / playerSprite.getMaxStamina();
-        batch.draw(STAMINA_FILLING_TEXTURE, TOP_GUI_WINDOW_X_PADDING, staminaY,
+        batch.draw(staminaFillingTexture, topGuiWindowXPadding, staminaY,
             (staminaWidth *  staminaPercentage), staminaHeight);
-        batch.draw(STAMINA_CONTAINER_TEXTURE, TOP_GUI_WINDOW_X_PADDING, staminaY,
+        batch.draw(staminaContainerTexture, topGuiWindowXPadding, staminaY,
             staminaWidth, staminaHeight);
     }
 
@@ -440,9 +426,9 @@ public class GameScreen implements Screen {
     private void drawHUDScore(final SpriteBatch batch, final BitmapFont font) {
         String scoreDisplay = String.format("%03d", playerSprite.getCurrentScore());
         font.draw(batch, scoreDisplay,
-            TOP_GUI_WINDOW_X_PADDING,
-            RotNRun.VIRTUAL_HEIGHT - TOP_GUI_WINDOW_Y_PADDING
-                - STAMINA_CONTAINER_TEXTURE.getHeight() * 2);
+            topGuiWindowXPadding,
+            RotNRun.VIRTUAL_HEIGHT - topGuiWindowYPadding
+                - staminaContainerTexture.getHeight() * 2);
     }
 
     /*
@@ -451,24 +437,26 @@ public class GameScreen implements Screen {
     private void drawHUDAbility(final SpriteBatch batch) {
         final float staminaWidth = 9 * 120;
         final float staminaHeight = 9 * 9;
-        final float staminaY = TOP_GUI_WINDOW_Y_PADDING;
+        final float staminaY = topGuiWindowYPadding;
         final float staminaX =  RotNRun.VIRTUAL_WIDTH / 2f - staminaWidth / 2f;
         final float staminaPercentage =
             (float) playerSprite.getCurrentCharge() / playerSprite.getMaxCharge();
-        batch.draw(STAMINA_FILLING_TEXTURE, staminaX, staminaY,
+        batch.draw(staminaFillingTexture, staminaX, staminaY,
             (staminaWidth *  staminaPercentage), staminaHeight);
-        batch.draw(STAMINA_CONTAINER_TEXTURE, staminaX, staminaY,
+        batch.draw(staminaContainerTexture, staminaX, staminaY,
             staminaWidth, staminaHeight);
     }
+
+
 
     /*
      * Checks for all types of input.
      */
     private void inputAll() {
         playerSprite.setX(MathUtils.clamp(playerSprite.getX(),
-            PLATFORM_AREA_X, PLATFORM_AREA_MAX_X));
+            platformAreaX, platformAreaMaxX));
         playerSprite.setY(MathUtils.clamp(playerSprite.getY(),
-            PLATFORM_AREA_Y, PLATFORM_AREA_MAX_Y));
+            platformAreaY, platformAreaMaxY));
         if (Gdx.input.isTouched()) {
             inputMovementTouch();
         }
@@ -481,24 +469,24 @@ public class GameScreen implements Screen {
     private void inputMovementTouch() {
         float delta = Gdx.graphics.getDeltaTime();
         game.setMousePosition();
-        if (playerSprite.getX() > RotNRun.MOUSE_POSITION.x) {
-            playerSprite.translateX(-PLAYER_SPEED * delta);
+        if (playerSprite.getX() > game.getMouseX()) {
+            playerSprite.translateX(-playerSpeed * delta);
             if (playerSprite.isFlipX()) {
                 playerSprite.flip(true, false);
             }
         }
-        if (playerSprite.getX() < RotNRun.MOUSE_POSITION.x) {
-            playerSprite.translateX(PLAYER_SPEED * delta);
+        if (playerSprite.getX() < game.getMouseX()) {
+            playerSprite.translateX(playerSpeed * delta);
             if (!playerSprite.isFlipX()) {
                 playerSprite.flip(true, false);
             }
         }
 
-        if (playerSprite.getY() > RotNRun.MOUSE_POSITION.y) {
-            playerSprite.translateY(-PLAYER_SPEED * delta);
+        if (playerSprite.getY() > game.getMouseY()) {
+            playerSprite.translateY(-playerSpeed * delta);
         }
-        if (playerSprite.getY() < RotNRun.MOUSE_POSITION.y) {
-            playerSprite.translateY(PLAYER_SPEED * delta);
+        if (playerSprite.getY() < game.getMouseY()) {
+            playerSprite.translateY(playerSpeed * delta);
         }
     }
 
@@ -510,25 +498,25 @@ public class GameScreen implements Screen {
         game.setMousePosition();
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
             || Gdx.input.isKeyPressed(Input.Keys.D)) {
-            playerSprite.translateX(PLAYER_SPEED * delta);
+            playerSprite.translateX(playerSpeed * delta);
             if (!playerSprite.isFlipX()) {
                 playerSprite.flip(true, false);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)
             || Gdx.input.isKeyPressed(Input.Keys.A)) {
-            playerSprite.translateX(-PLAYER_SPEED * delta);
+            playerSprite.translateX(-playerSpeed * delta);
             if (playerSprite.isFlipX()) {
                 playerSprite.flip(true, false);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)
             || Gdx.input.isKeyPressed(Input.Keys.S)) {
-            playerSprite.translateY(-PLAYER_SPEED * delta);
+            playerSprite.translateY(-playerSpeed * delta);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.UP)
             || Gdx.input.isKeyPressed(Input.Keys.W)) {
-            playerSprite.translateY(PLAYER_SPEED * delta);
+            playerSprite.translateY(playerSpeed * delta);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && playerSprite.getIsCharged()) {
             playerSprite.useAbility();
@@ -543,6 +531,8 @@ public class GameScreen implements Screen {
                                                final float insetValue) {
         entityHitBox.setPosition(entity.getX() + insetValue, entity.getY() + insetValue);
     }
+
+
 
     /*
      * Runs all logic.
@@ -562,23 +552,23 @@ public class GameScreen implements Screen {
         float delta = Gdx.graphics.getDeltaTime();
         for (Enemy enemy : enemySprites) {
             float speed = enemy.getSpeed();
-            if (enemy.getX() + SPRITE_HIT_BOX_INSET > playerSprite.getX()) {
+            if (enemy.getX() + spriteHitBoxInset > playerSprite.getX()) {
                 enemy.translateX(-speed * delta);
                 if (enemy.isFlipX()) {
                     enemy.flip(true, false);
                 }
             }
-            if (enemy.getX() - SPRITE_HIT_BOX_INSET < playerSprite.getX()) {
+            if (enemy.getX() - spriteHitBoxInset < playerSprite.getX()) {
                 enemy.translateX(speed * delta);
                 if (!enemy.isFlipX()) {
                     enemy.flip(true, false);
                 }
             }
 
-            if (enemy.getY() + SPRITE_HIT_BOX_INSET > playerSprite.getY()) {
+            if (enemy.getY() + spriteHitBoxInset > playerSprite.getY()) {
                 enemy.translateY(-speed * delta);
             }
-            if (enemy.getY() - SPRITE_HIT_BOX_INSET < playerSprite.getY()) {
+            if (enemy.getY() - spriteHitBoxInset < playerSprite.getY()) {
                 enemy.translateY(speed * delta);
             }
         }
@@ -589,10 +579,10 @@ public class GameScreen implements Screen {
      */
     private void logicEnemyHitBox() {
         for (Enemy enemy : enemySprites) {
-            updateEntityHitBoxCoordinates(enemyHitBox, enemy, SPRITE_HIT_BOX_INSET);
+            updateEntityHitBoxCoordinates(enemyHitBox, enemy, spriteHitBoxInset);
             if (abilityActivated) {
-                playerAbility.setPosition(playerSprite.getX() + (SPRITE_WIDTH / 2),
-                    playerSprite.getY() + (SPRITE_HEIGHT / 2));
+                playerAbility.setPosition(playerSprite.getX() + (spriteWidth / 2),
+                    playerSprite.getY() + (spriteHeight / 2));
                 if (Intersector.overlaps(playerAbility, enemyHitBox)) {
                     enemySprites.removeValue(enemy, true);
                     allEntities.removeValue(enemy, true);
@@ -610,8 +600,8 @@ public class GameScreen implements Screen {
      */
     private void logicItemPickup() {
         for (Item item : itemSprites) {
-            updateEntityHitBoxCoordinates(playerHitBox, playerSprite, SPRITE_HIT_BOX_INSET);
-            updateEntityHitBoxCoordinates(itemHitBox, item, ITEM_SPRITE_HIT_BOX_INSET);
+            updateEntityHitBoxCoordinates(playerHitBox, playerSprite, spriteHitBoxInset);
+            updateEntityHitBoxCoordinates(itemHitBox, item, itemSpriteHitBoxInset);
             if (itemHitBox.overlaps(playerHitBox)) {
                 item.increasePlayerStat(playerSprite);
                 itemSprites.removeValue(item, true);
@@ -625,8 +615,8 @@ public class GameScreen implements Screen {
      */
     private void logicEndRun() {
         if (playerSprite.getCurrentStamina() <= 0) {
-            game.setScreen(new ResultScreen(game, gameDifficulty, playerSprite.getCurrentScore()));
             dispose();
+            game.setScreen(new ResultScreen(game, gameDifficulty, playerSprite.getCurrentScore()));
         }
     }
 
@@ -635,8 +625,8 @@ public class GameScreen implements Screen {
      */
     private void logicGameOver() {
         if (playerSprite.getCurrentHP() <= 0) {
-            game.setScreen(new GameOverScreen(game));
             dispose();
+            game.setScreen(new GameOverScreen(game));
         }
     }
 
@@ -666,9 +656,24 @@ public class GameScreen implements Screen {
 
     }
 
+    /**
+     * Removes resources.
+     */
     @Override
     public void dispose() {
-
+        backgroundTexture.dispose();
+        platformTexture.dispose();
+        playerTexture.dispose();
+        playerDamagedTexture.dispose();
+        abilityTexture.dispose();
+        standardZombieTexture.dispose();
+        itemHealthTexture.dispose();
+        itemStaminaTexture.dispose();
+        itemScoreTexture.dispose();
+        healthFilledTexture.dispose();
+        healthEmptyTexture.dispose();
+        staminaContainerTexture.dispose();
+        staminaFillingTexture.dispose();
     }
 
 

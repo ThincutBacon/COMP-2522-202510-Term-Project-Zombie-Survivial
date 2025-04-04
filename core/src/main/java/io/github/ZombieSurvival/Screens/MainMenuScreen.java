@@ -44,17 +44,17 @@ public class MainMenuScreen implements Screen {
     private final float exitXY = 100f;
     private final float exitMaxXY = exitXY + exitLength;
     // Textures
-    private final Texture gameTitle;
-    private final Texture easyButtonInactive;
-    private final Texture easyButtonActive;
-    private final Texture normalButtonInactive;
-    private final Texture normalButtonActive;
-    private final Texture normalButtonLocked;
-    private final Texture hardButtonInactive;
-    private final Texture hardButtonActive;
-    private final Texture hardButtonLocked;
-    private final Texture exitButtonInactive;
-    private final Texture exitButtonActive;
+    private final Texture gameTitle = new Texture("Game_Title.png");
+    private final Texture easyButtonInactive = new Texture("Difficulty_Easy_Inactive.png");
+    private final Texture easyButtonActive = new Texture("Difficulty_Easy_Active.png");
+    private final Texture normalButtonInactive = new Texture("Difficulty_Normal_Inactive.png");
+    private final Texture normalButtonActive = new Texture("Difficulty_Normal_Active.png");
+    private final Texture normalButtonLocked = new Texture("Difficulty_Normal_Locked.png");
+    private final Texture hardButtonInactive = new Texture("Difficulty_Hard_Inactive.png");
+    private final Texture hardButtonActive = new Texture("Difficulty_Hard_Active.png");
+    private final Texture hardButtonLocked = new Texture("Difficulty_Hard_Locked.png");
+    private final Texture exitButtonInactive = new Texture("Exit_Button_Inactive.png");
+    private final Texture exitButtonActive = new Texture("Exit_Button_Active.png");
     // Saved values
     private int easyHighScore = 0;
     private boolean easyNewHighScore = false;
@@ -76,18 +76,6 @@ public class MainMenuScreen implements Screen {
             throw new IllegalArgumentException("There is no game to the apply screen to.");
         }
         this.game = game;
-        //Textures
-        gameTitle = new Texture("Game_Title.png");
-        easyButtonInactive = new Texture("Difficulty_Easy_Inactive.png");
-        easyButtonActive = new Texture("Difficulty_Easy_Active.png");
-        normalButtonInactive = new Texture("Difficulty_Normal_Inactive.png");
-        normalButtonActive = new Texture("Difficulty_Normal_Active.png");
-        normalButtonLocked = new Texture("Difficulty_Normal_Locked.png");
-        hardButtonInactive = new Texture("Difficulty_Hard_Inactive.png");
-        hardButtonActive = new Texture("Difficulty_Hard_Active.png");
-        hardButtonLocked = new Texture("Difficulty_Hard_Locked.png");
-        exitButtonInactive = new Texture("Exit_Button_Inactive.png");
-        exitButtonActive = new Texture("Exit_Button_Active.png");
         try {
             Scanner scanner = new Scanner(RotNRun.SAVE_FILE_PATH);
             easyHighScore = scanner.nextInt();
@@ -138,7 +126,7 @@ public class MainMenuScreen implements Screen {
     @Override
     public void render(final float delta) {
         // Clears screen
-        game.applyViewport();
+        game.clearViewport();
 
         // For brevity
         SpriteBatch batch = game.getSpriteBatch();
@@ -147,7 +135,7 @@ public class MainMenuScreen implements Screen {
             drawTitle(batch);
             drawDifficultyHighScores(batch);
             drawDifficultyButtons(batch);
-            drawButtons(batch);
+            drawExitButton(batch);
         batch.end();
         // Check for input
         input();
@@ -167,9 +155,9 @@ public class MainMenuScreen implements Screen {
     }
 
     /*
-     * Draws the button textures to screen.
+     * Draws the exit button textures to screen.
      */
-    private void drawButtons(final SpriteBatch batch) {
+    private void drawExitButton(final SpriteBatch batch) {
         // Display button logic
         game.setMousePosition();
         // Exit Button
@@ -181,7 +169,7 @@ public class MainMenuScreen implements Screen {
     }
 
     /*
-     * Draws the difficulty high scores to screen.
+     * Draws the difficulty high scores text to screen.
      */
     private void drawDifficultyHighScores(final SpriteBatch batch) {
         BitmapFont normalText = game.getNormalText();
@@ -219,11 +207,10 @@ public class MainMenuScreen implements Screen {
     }
 
     /*
-     * Draws the "new" text above the high scores.
+     * Draws the "new" text above the high scores if new value is true.
      */
     private void drawDifficultyNew(final SpriteBatch batch,
-                                   final float difficultyTextXCenter,
-                                   final float difficultyTextY) {
+                                   final float difficultyTextXCenter, final float difficultyTextY) {
         BitmapFont yellowText = game.getYellowText();
         final float offset = 25f;
         // If high score was updated
@@ -293,23 +280,23 @@ public class MainMenuScreen implements Screen {
             // Game select EASY
             if (game.checkMouseOnButton(difficultyEasyX, difficultyEasyMaxX,
                 difficultyY, difficultyMaxY)) {
-                game.setScreen(new GameScreen(game, Difficulty.EASY));
                 dispose();
+                game.setScreen(new GameScreen(game, Difficulty.EASY));
             }
             // Game select NORMAL
             if (normalUnlocked) {
                 if (game.checkMouseOnButton(difficultyNormalX, difficultyNormalMaxX,
                     difficultyY, difficultyMaxY)) {
-                    game.setScreen(new GameScreen(game, Difficulty.NORMAL));
                     dispose();
+                    game.setScreen(new GameScreen(game, Difficulty.NORMAL));
                 }
             }
             // Game select HARD
             if (hardUnlocked) {
                 if (game.checkMouseOnButton(difficultyHardX, difficultyHardMaxX,
                     difficultyY, difficultyMaxY)) {
-                    game.setScreen(new GameScreen(game, Difficulty.HARD));
                     dispose();
+                    game.setScreen(new GameScreen(game, Difficulty.HARD));
                 }
             }
             // Quit game
@@ -358,8 +345,21 @@ public class MainMenuScreen implements Screen {
 
     }
 
+    /**
+     * Removes resources.
+     */
     @Override
     public void dispose() {
-
+        gameTitle.dispose();
+        easyButtonInactive.dispose();
+        easyButtonActive.dispose();
+        normalButtonInactive.dispose();
+        normalButtonActive.dispose();
+        normalButtonLocked.dispose();
+        hardButtonInactive.dispose();
+        hardButtonActive.dispose();
+        hardButtonLocked.dispose();
+        exitButtonInactive.dispose();
+        exitButtonActive.dispose();
     }
 }

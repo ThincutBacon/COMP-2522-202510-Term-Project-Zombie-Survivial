@@ -21,30 +21,25 @@ import java.util.Scanner;
  * @version 2025
  */
 public class ResultScreen implements Screen {
-    // Values
-    private static final float ONE_PIXEL = 25f;
-    private static final float BOX_WIDTH = 35 * ONE_PIXEL;
-    private static final float BOX_HEIGHT = 50 * ONE_PIXEL;
-    private static final float BOX_X = RotNRun.VIRTUAL_WIDTH / 2f - BOX_WIDTH / 2f;
-    private static final float BOX_Y = RotNRun.VIRTUAL_HEIGHT / 2f - BOX_HEIGHT / 2f;
-
-    private static final float BUTTON_WIDTH = 27 * ONE_PIXEL;
-    private static final float BUTTON_HEIGHT = 10 * ONE_PIXEL;
-    private static final float BUTTON_X = BOX_X + 4 * ONE_PIXEL;
-    private static final float BUTTON_MAX_X = BUTTON_X + BUTTON_WIDTH;
-    private static final float BUTTON_Y = BOX_Y + 4 * ONE_PIXEL;
-    private static final float BUTTON_MAX_Y = BUTTON_Y + BUTTON_HEIGHT;
-    // Unlock values
-    private static final int DIFFICULTY_UNLOCK_VALUE = 100;
-    // Textures
-    private static final Texture BOX_TEXTURE =
-        new Texture("Result_Box.png");
-    private static final Texture BUTTON_INACTIVE_TEXTURE =
-        new Texture("Menu_Button_Inactive.png");
-    private static final Texture BUTTON_ACTIVE_TEXTURE =
-        new Texture("Menu_Button_Active.png");
     // Current running game
     private final RotNRun game;
+    // Values
+    private final float onePixel = 25f;
+    private final float boxWidth = 35 * onePixel;
+    private final float boxHeight = 50 * onePixel;
+    private final float boxX = RotNRun.VIRTUAL_WIDTH / 2f - boxWidth / 2f;
+    private final float boxY = RotNRun.VIRTUAL_HEIGHT / 2f - boxHeight / 2f;
+
+    private final float buttonWidth = 27 * onePixel;
+    private final float buttonHeight = 10 * onePixel;
+    private final float buttonX = boxX + 4 * onePixel;
+    private final float buttonMaxX = buttonX + buttonWidth;
+    private final float buttonY = boxY + 4 * onePixel;
+    private final float buttonMaxY = buttonY + buttonHeight;
+    // Textures
+    private final Texture boxTexture = new Texture("Result_Box.png");
+    private final Texture buttonInactiveTexture = new Texture("Menu_Button_Inactive.png");
+    private final Texture buttonActiveTexture = new Texture("Menu_Button_Active.png");
     // Result display values
     private final Difficulty difficulty;
     private final int score;
@@ -105,13 +100,13 @@ public class ResultScreen implements Screen {
     @Override
     public void render(final float delta) {
         // Clears screen
-        game.applyViewport();
+        game.clearViewport();
         // For brevity
         SpriteBatch batch = game.getSpriteBatch();
         // Draw elements to screen
         batch.begin();
-        drawTextures(batch);
-        drawTitleText(batch);
+            drawTextures(batch);
+            drawTitleText(batch);
         batch.end();
         // Check for input
         input();
@@ -122,15 +117,15 @@ public class ResultScreen implements Screen {
      */
     private void drawTextures(final SpriteBatch batch) {
         // Draw box
-        batch.draw(BOX_TEXTURE, BOX_X, BOX_Y, BOX_WIDTH, BOX_HEIGHT);
+        batch.draw(boxTexture, boxX, boxY, boxWidth, boxHeight);
         // Draw button
-        if (game.checkMouseOnButton(BUTTON_X, BUTTON_MAX_X,
-            BUTTON_Y + ONE_PIXEL, BUTTON_MAX_Y)) {
-            batch.draw(BUTTON_ACTIVE_TEXTURE, BUTTON_X, BUTTON_Y,
-                BUTTON_WIDTH, BUTTON_HEIGHT);
+        if (game.checkMouseOnButton(buttonX, buttonMaxX,
+            buttonY + onePixel, buttonMaxY)) {
+            batch.draw(buttonActiveTexture, buttonX, buttonY,
+                buttonWidth, buttonHeight);
         } else {
-            batch.draw(BUTTON_INACTIVE_TEXTURE, BUTTON_X, BUTTON_Y,
-                BUTTON_WIDTH, BUTTON_HEIGHT);
+            batch.draw(buttonInactiveTexture, buttonX, buttonY,
+                buttonWidth, buttonHeight);
         }
     }
 
@@ -142,10 +137,10 @@ public class ResultScreen implements Screen {
 
         GlyphLayout glyphLayout = new GlyphLayout();
         glyphLayout.setText(bigText, "FINAL\nSCORE");
-        final float titleCenterX = (BOX_WIDTH / 2) - (glyphLayout.width / 2);
-        final float titleY = BOX_Y + BOX_HEIGHT - glyphLayout.height;
+        final float titleCenterX = (boxWidth / 2) - (glyphLayout.width / 2);
+        final float titleY = boxY + boxHeight - glyphLayout.height;
         bigText.draw(batch, "FINAL\nSCORE",
-            BOX_X + titleCenterX, titleY);
+            boxX + titleCenterX, titleY);
 
         drawDifficultyText(batch, titleY);
     }
@@ -158,13 +153,13 @@ public class ResultScreen implements Screen {
         GlyphLayout glyphLayout = new GlyphLayout();
         String difficultyString = String.format("DIFFICULTY: %6s", difficulty);
         glyphLayout.setText(normalText, difficultyString);
-        final float difficultyCenterX = (BOX_X + BOX_WIDTH / 2) - (glyphLayout.width / 2);
+        final float difficultyCenterX = (boxX + boxWidth / 2) - (glyphLayout.width / 2);
         final float difficultyY = titleY - (glyphLayout.height * 7f);
         normalText.draw(batch, difficultyString, difficultyCenterX, difficultyY);
 
         String scoreString = String.format("SCORE: %03d", score);
         glyphLayout.setText(normalText, scoreString);
-        final float scoreCenterX = (BOX_X + BOX_WIDTH / 2) - (glyphLayout.width / 2);
+        final float scoreCenterX = (boxX + boxWidth / 2) - (glyphLayout.width / 2);
         final float scoreY = difficultyY - (glyphLayout.height * 2f);
         normalText.draw(batch, scoreString, scoreCenterX, scoreY);
 
@@ -180,7 +175,7 @@ public class ResultScreen implements Screen {
         BitmapFont yellowText = game.getYellowText();
         GlyphLayout glyphLayout = new GlyphLayout();
         glyphLayout.setText(yellowText, "NEW HIGH-SCORE!!!");
-        final float newCenterX = (BOX_X + BOX_WIDTH / 2) - (glyphLayout.width / 2);
+        final float newCenterX = (boxX + boxWidth / 2) - (glyphLayout.width / 2);
         final float newY = scoreY - (glyphLayout.height * 3.5f);
         switch (difficulty) {
             case EASY:
@@ -221,11 +216,11 @@ public class ResultScreen implements Screen {
         if (Gdx.input.isTouched()) {
             game.setMousePosition();
             // Game select EASY
-            if (game.checkMouseOnButton(BUTTON_X, BUTTON_MAX_X,
-                BUTTON_Y + ONE_PIXEL, BUTTON_MAX_Y)) {
+            if (game.checkMouseOnButton(buttonX, buttonMaxX,
+                buttonY + onePixel, buttonMaxY)) {
                 writeToSave();
-                game.setScreen(new MainMenuScreen(game));
                 dispose();
+                game.setScreen(new MainMenuScreen(game));
             }
         }
     }
@@ -272,13 +267,15 @@ public class ResultScreen implements Screen {
             }
         }
 
+        // Unlock values
+        final int difficultyUnlockValue = 100;
         if (!normalUnlocked) {
-            if (easyHighScore >= DIFFICULTY_UNLOCK_VALUE) {
+            if (easyHighScore >= difficultyUnlockValue) {
                 normalUnlocked = true;
             }
         }
         if (!hardUnlocked) {
-            if (normalHighScore >= DIFFICULTY_UNLOCK_VALUE) {
+            if (normalHighScore >= difficultyUnlockValue) {
                 hardUnlocked = true;
             }
         }
@@ -310,8 +307,13 @@ public class ResultScreen implements Screen {
 
     }
 
+    /**
+     * Removes resources.
+     */
     @Override
     public void dispose() {
-
+        boxTexture.dispose();
+        buttonInactiveTexture.dispose();
+        buttonActiveTexture.dispose();
     }
 }

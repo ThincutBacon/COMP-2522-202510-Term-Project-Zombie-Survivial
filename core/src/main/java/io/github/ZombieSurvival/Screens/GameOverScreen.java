@@ -13,28 +13,25 @@ import io.github.ZombieSurvival.RotNRun;
  * @version 2025
  */
 public class GameOverScreen implements Screen {
-    // Values
-    private static final float ONE_PIXEL = 25f;
-    private static final float BOX_WIDTH = 35 * ONE_PIXEL;
-    private static final float BOX_HEIGHT = 50 * ONE_PIXEL;
-    private static final float BOX_X = RotNRun.VIRTUAL_WIDTH / 2f - BOX_WIDTH / 2f;
-    private static final float BOX_Y = RotNRun.VIRTUAL_HEIGHT / 2f - BOX_HEIGHT / 2f;
-
-    private static final float BUTTON_WIDTH = 27 * ONE_PIXEL;
-    private static final float BUTTON_HEIGHT = 10 * ONE_PIXEL;
-    private static final float BUTTON_X = BOX_X + 4 * ONE_PIXEL;
-    private static final float BUTTON_MAX_X = BUTTON_X + BUTTON_WIDTH;
-    private static final float BUTTON_Y = BOX_Y + 4 * ONE_PIXEL;
-    private static final float BUTTON_MAX_Y = BUTTON_Y + BUTTON_HEIGHT;
-    // Textures
-    private static final Texture BOX_TEXTURE =
-        new Texture("RIP_Box.png");
-    private static final Texture BUTTON_INACTIVE_TEXTURE =
-        new Texture("Menu_Button_Inactive.png");
-    private static final Texture BUTTON_ACTIVE_TEXTURE =
-        new Texture("Menu_Button_Active.png");
     // Current running game
     private final RotNRun game;
+    // Values
+    private final float onePixel = 25f;
+    private final float boxWidth = 35 * onePixel;
+    private final float boxHeight = 50 * onePixel;
+    private final float boxX = RotNRun.VIRTUAL_WIDTH / 2f - boxWidth / 2f;
+    private final float boxY = RotNRun.VIRTUAL_HEIGHT / 2f - boxHeight / 2f;
+
+    private final float buttonWidth = 27 * onePixel;
+    private final float buttonHeight = 10 * onePixel;
+    private final float buttonX = boxX + 4 * onePixel;
+    private final float buttonMaxX = buttonX + buttonWidth;
+    private final float buttonY = boxY + 4 * onePixel;
+    private final float buttonMaxY = buttonY + buttonHeight;
+    // Textures
+    private final Texture boxTexture = new Texture("RIP_Box.png");
+    private final Texture buttonInactiveTexture = new Texture("Menu_Button_Inactive.png");
+    private final Texture buttonActiveTexture = new Texture("Menu_Button_Active.png");
 
     /**
      * Constructs a GameOverScreen object with the specified instance of game.
@@ -62,21 +59,21 @@ public class GameOverScreen implements Screen {
     @Override
     public void render(final float delta) {
         // Clears screen
-        game.applyViewport();
+        game.clearViewport();
         // For brevity
         SpriteBatch batch = game.getSpriteBatch();
         // Draw elements to screen
         batch.begin();
         // Draw box
-        batch.draw(BOX_TEXTURE, BOX_X, BOX_Y, BOX_WIDTH, BOX_HEIGHT);
+        batch.draw(boxTexture, boxX, boxY, boxWidth, boxHeight);
         // Draw button
-        if (game.checkMouseOnButton(BUTTON_X, BUTTON_MAX_X,
-            BUTTON_Y + ONE_PIXEL, BUTTON_MAX_Y)) {
-            batch.draw(BUTTON_ACTIVE_TEXTURE, BUTTON_X, BUTTON_Y,
-                BUTTON_WIDTH, BUTTON_HEIGHT);
+        if (game.checkMouseOnButton(buttonX, buttonMaxX,
+            buttonY + onePixel, buttonMaxY)) {
+            batch.draw(buttonActiveTexture, buttonX, buttonY,
+                buttonWidth, buttonHeight);
         } else {
-            batch.draw(BUTTON_INACTIVE_TEXTURE, BUTTON_X, BUTTON_Y,
-                BUTTON_WIDTH, BUTTON_HEIGHT);
+            batch.draw(buttonInactiveTexture, buttonX, buttonY,
+                buttonWidth, buttonHeight);
         }
         batch.end();
         // Check for input
@@ -84,16 +81,16 @@ public class GameOverScreen implements Screen {
     }
 
     /*
-     * Gets the corresponding current high score value.
+     * Checks for user input.
      */
     private void input() {
         if (Gdx.input.isTouched()) {
             game.setMousePosition();
             // Game select EASY
-            if (game.checkMouseOnButton(BUTTON_X, BUTTON_MAX_X,
-                BUTTON_Y + ONE_PIXEL, BUTTON_MAX_Y)) {
-                game.setScreen(new MainMenuScreen(game));
+            if (game.checkMouseOnButton(buttonX, buttonMaxX,
+                buttonY + onePixel, buttonMaxY)) {
                 dispose();
+                game.setScreen(new MainMenuScreen(game));
             }
         }
     }
@@ -124,8 +121,13 @@ public class GameOverScreen implements Screen {
 
     }
 
+    /**
+     * Removes resources.
+     */
     @Override
     public void dispose() {
-
+        boxTexture.dispose();
+        buttonInactiveTexture.dispose();
+        buttonActiveTexture.dispose();
     }
 }
