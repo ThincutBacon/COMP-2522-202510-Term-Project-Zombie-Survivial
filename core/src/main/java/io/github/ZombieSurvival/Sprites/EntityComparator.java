@@ -8,7 +8,7 @@ import java.util.Comparator;
  * @author Kanon Nishiyama
  * @version 2025
  */
-public class EntityComparator  implements Comparator<Entity> {
+public class EntityComparator implements Comparator<Entity> {
     /**
      * Compares the two Students by their Student IDs.
      * @param first a Student
