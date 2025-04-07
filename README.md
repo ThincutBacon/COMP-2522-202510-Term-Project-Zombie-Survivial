@@ -1,7 +1,7 @@
 # COMP-2522-202510-Term-Project-Zombie-Survival
 > **Project Title:** Rot 'N' Run   
 > **Developer:** Kanon Nishiyama  
-> **Music:** Carxofa [Link](https://carxofamusic.itch.io/dark-and-dystopian-music-pack-lite)
+> **Music:** Carxofa (on itch.io) [[Link]](https://carxofamusic.itch.io/dark-and-dystopian-music-pack-lite)
 
 ## Project Description
 
