@@ -2,6 +2,7 @@ package io.github.ZombieSurvival.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.ZombieSurvival.RotNRun;
@@ -32,6 +33,8 @@ public class GameOverScreen implements Screen {
     private final Texture boxTexture = new Texture("RIP_Box.png");
     private final Texture buttonInactiveTexture = new Texture("Menu_Button_Inactive.png");
     private final Texture buttonActiveTexture = new Texture("Menu_Button_Active.png");
+    // Sounds
+    private final Music bgm = Gdx.audio.newMusic(Gdx.files.internal("Surrender to Shadows.wav"));
 
     /**
      * Constructs a GameOverScreen object with the specified instance of game.
@@ -46,9 +49,12 @@ public class GameOverScreen implements Screen {
         this.game = game;
     }
 
+    /**
+     * Runs whenever the screen in shown.
+     */
     @Override
     public void show() {
-
+        bgm.play();
     }
 
     /**
@@ -129,5 +135,6 @@ public class GameOverScreen implements Screen {
         boxTexture.dispose();
         buttonInactiveTexture.dispose();
         buttonActiveTexture.dispose();
+        bgm.dispose();
     }
 }

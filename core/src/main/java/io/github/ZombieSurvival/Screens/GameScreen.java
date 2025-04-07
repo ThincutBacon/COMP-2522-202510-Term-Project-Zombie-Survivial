@@ -3,6 +3,7 @@ package io.github.ZombieSurvival.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -76,6 +77,8 @@ public class GameScreen implements Screen {
     private final Texture healthEmptyTexture = new Texture("Health_Empty.png");
     private final Texture staminaContainerTexture = new Texture("Stamina_Bar_Container.png");
     private final Texture staminaFillingTexture = new Texture("Stamina_Bar_Filling.png");
+    // Sounds
+    private final Music bgm = Gdx.audio.newMusic(Gdx.files.internal("Haunted Visions.wav"));
     // Sprites
     private final Array<Entity> allEntities;
     // Player
@@ -145,9 +148,12 @@ public class GameScreen implements Screen {
         itemSpawnTimer = 0;
     }
 
+    /**
+     * Runs whenever the screen in shown.
+     */
     @Override
     public void show() {
-
+        bgm.play();
     }
 
     /**
@@ -674,6 +680,7 @@ public class GameScreen implements Screen {
         healthEmptyTexture.dispose();
         staminaContainerTexture.dispose();
         staminaFillingTexture.dispose();
+        bgm.dispose();
     }
 
 

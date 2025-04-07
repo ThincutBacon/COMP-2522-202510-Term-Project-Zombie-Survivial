@@ -3,6 +3,8 @@ package io.github.ZombieSurvival.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -55,6 +57,8 @@ public class MainMenuScreen implements Screen {
     private final Texture hardButtonLocked = new Texture("Difficulty_Hard_Locked.png");
     private final Texture exitButtonInactive = new Texture("Exit_Button_Inactive.png");
     private final Texture exitButtonActive = new Texture("Exit_Button_Active.png");
+    // Sounds
+    private final Music bgm = Gdx.audio.newMusic(Gdx.files.internal("Labyrinth of Shadows.wav"));
     // Saved values
     private int easyHighScore = 0;
     private boolean easyNewHighScore = false;
@@ -113,9 +117,12 @@ public class MainMenuScreen implements Screen {
         }
     }
 
+    /**
+     * Runs whenever the screen in shown.
+     */
     @Override
     public void show() {
-
+        bgm.play();
     }
 
     /**
@@ -361,5 +368,7 @@ public class MainMenuScreen implements Screen {
         hardButtonLocked.dispose();
         exitButtonInactive.dispose();
         exitButtonActive.dispose();
+        bgm.dispose();
+        select.dispose();
     }
 }
